@@ -1,21 +1,12 @@
 import React from 'react';
 import { tokens } from '../tokens';
 
-interface InputProps {
-  type?: 'text' | 'email' | 'password' | 'tel';
-  placeholder?: string;
+interface DatePickerProps {
   value?: string;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  disabled?: boolean;
+  onChange: (value: string) => void;
 }
 
-export const Input: React.FC<InputProps> = ({
-  type = 'text',
-  placeholder,
-  value,
-  onChange,
-  disabled = false,
-}) => {
+export const DatePicker: React.FC<DatePickerProps> = ({ value, onChange }) => {
   const style: React.CSSProperties = {
     fontFamily: tokens.typography.fontFamily,
     fontSize: tokens.typography.fontSize.md,
@@ -23,17 +14,13 @@ export const Input: React.FC<InputProps> = ({
     border: `1px solid ${tokens.colors.secondary}`,
     borderRadius: tokens.borderRadius.md,
     outline: 'none',
-    width: '100%',
-    boxSizing: 'border-box',
   };
 
   return (
     <input
-      type={type}
-      placeholder={placeholder}
+      type="date"
       value={value}
-      onChange={onChange}
-      disabled={disabled}
+      onChange={(e) => onChange(e.target.value)}
       style={style}
     />
   );

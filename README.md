@@ -1,100 +1,43 @@
-# FollowUpX Web App
+# FollowUpX Architecture
 
-A Next.js application with strict role-based route separation, reusable design system, and zero business coupling between sales and manager experiences.
+## Core Principles
 
-## Architecture Overview
+- **Domain-Driven Design**: Each domain owns its routes, services, and data access with minimal public interfaces.
+- **Strict Layer Boundaries**: Routes handle HTTP only, services contain business logic, repositories handle data access. No exceptions.
+- **Centralized Cross-Cutting Concerns**: Authentication, authorization, validation, error handling, logging, and response formatting live in shared core modules.
+- **Zero Duplication Rule**: Any repeated logic is extracted into shared utilities or services. Copy-paste code is forbidden.
+- **Explicit Dependency Direction**: Routes depend on services, services on repositories. Reverse or lateral dependencies are forbidden.
+- **Single Source of Truth**: Enums, constants, config, and validation schemas are defined once and imported.
+- **Role Logic Isolation**: Role checks live in auth guards or services, never scattered across handlers.
+- **Pure Utilities Only**: Utility functions are stateless, deterministic, and side-effect free.
+- **Extensibility over Cleverness**: Code allows new domains and features to be added without modifying existing modules.
 
-### Core Principles
-- **Role-based routing**: Role resolved once at login, immediate redirect to role home
-- **No shared pages**: Sales and manager routes are completely separate
-- **Layout selection by route group**: Sales (mobile-first), Manager (desktop-first)
-- **Zero coupling**: Sales and manager folders never import from each other
-- **Design system isolation**: No business logic in design-system, pure UI components
-- **Domain-driven structure**: Each domain owns routes, services, data access with minimal public interface
+## Folder Structure
 
-### Folder Structure
-```
-app/
-  auth/          # Authentication routes
-  sales/         # Sales-specific routes
-  manager/       # Manager-specific routes
-core/
-  api/           # API utilities
-  auth/          # Authentication services
-  config/        # Configuration
-  utils/         # Shared utilities
-design-system/
-  tokens/        # Design tokens (colors, typography, spacing)
-  components/    # Base UI components
-  layouts/       # Layout components
-features/        # UI logic only, no routing
-vendor/          # Third-party integrations
-follow-up/       # Business-specific modules
-```
+- `app/`: Next.js app router with role-based routes
+  - `auth/`: Authentication routes
+  - `sales/`: Salesperson routes
+  - `manager/`: Manager routes
+- `core/`: Shared business logic and infrastructure
+  - `api/`: API client functions
+  - `auth/`: Authentication services
+  - `config/`: Configuration
+  - `utils/`: Utility functions
+- `design-system/`: Reusable UI components and tokens
+  - `tokens/`: Design tokens (colors, typography, etc.)
+  - `components/`: Base components
+  - `layouts/`: Layout components
+- `features/`: UI logic features (no routing)
+- `vendor/`: Vendor-specific code
+- `follow-up/`: Follow-up specific code
 
-### Routes
-- `/auth/*` - Authentication
-- `/sales/*` - Sales experience
-- `/manager/*` - Manager experience
+## Rules
 
-### Design System
-- **Tokens**: Colors, typography, spacing, border radius, shadows
-- **Components**: Button, Text, Input, Select, Card, Badge, ListItem
-- **Layouts**: AuthLayout, SalesLayout (mobile-first), ManagerLayout (desktop-first)
-
-## Strict Rules
-
-### Separation of Concerns
-- **sales** and **manager** folders never import from each other
-- **design-system** contains no business logic
-- **features** contain UI logic only, no routing
-- **core** contains no UI
-
-### Layer Boundaries
-- Routes handle HTTP only
-- Services contain business logic
-- Repositories handle all data access
-- No exceptions to these boundaries
-
-### Cross-cutting Concerns
-- Authentication, authorization, validation, error handling, logging centralized in core modules
-- Reused everywhere
-
-### Code Quality
-- **Zero duplication**: Any repeated logic extracted to shared utilities/services
-- **Single source of truth**: Enums, constants, config, validation schemas defined once
-- **Role logic isolation**: Role checks in auth guards/services, never scattered
-- **Pure utilities**: Stateless, deterministic, side-effect free
-- **Extensibility**: New domains/features added without modifying existing modules
-
-### Dependency Direction
-- Routes may depend on services
-- Services on repositories
-- Reverse/lateral dependencies forbidden
-
-## Getting Started
-
-1. Install dependencies:
-```bash
-npm install
-```
-
-2. Run development server:
-```bash
-npm run dev
-```
-
-3. Open [http://localhost:3000](http://localhost:3000)
-
-4. Login with test credentials:
-   - Sales: `sales@example.com` / `password`
-   - Manager: `manager@example.com` / `password`
-
-## Development Guidelines
-
-- Always check for existing shared utilities before implementing new logic
-- Use design system components for all UI
-- Keep business logic out of components and layouts
-- Test components in isolation from business logic
-- Follow the dependency direction strictly
-- Extract repeated code immediately
+- Sales and manager folders never import from each other.
+- Design-system contains no business logic.
+- Features contain UI logic only, no routing.
+- Core contains no UI.
+- No role conditionals inside components.
+- No business-specific styling in tokens.
+- No cross-role imports.
+- No backend permission assumptions in frontend.

@@ -16,7 +16,7 @@ export const Card: React.FC<CardProps> = ({
     backgroundColor: tokens.colors.white,
     borderRadius: tokens.borderRadius.md,
     boxShadow: tokens.shadows[shadow],
-    padding: tokens.spacing[padding],
+    padding: tokens.spacing[padding as keyof typeof tokens.spacing],
   };
 
   return <div style={style}>{children}</div>;

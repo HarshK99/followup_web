@@ -4,18 +4,20 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AuthLayout } from '../../../design-system/layouts';
 import { Button, Input, Text, Card } from '../../../design-system/components';
-import { login, getRoleHome } from '../../../core/auth';
+import { login, getRoleHome, setSession } from '../../../core/auth';
+import { tokens } from '../../../design-system/tokens';
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const router = useRouter();
 
   const handleLogin = async () => {
-    const user = await login(email, password);
-    if (user) {
-      router.push(getRoleHome(user.role));
+    const result = await login(phone, password);
+    if (result) {
+      setSession({ token: result.token, user: result.user });
+      router.push(getRoleHome(result.user.role));
     } else {
       setError('Invalid credentials');
     }
@@ -25,15 +27,15 @@ export default function LoginPage() {
     <AuthLayout>
       <Card>
         <Text as="h2" size="lg" weight="bold">Login</Text>
-        <div style={{ marginBottom: '16px' }}>
+        <div style={{ marginBottom: tokens.spacing[4] }}>
           <Input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type="tel"
+            placeholder="Phone Number"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
           />
         </div>
-        <div style={{ marginBottom: '16px' }}>
+        <div style={{ marginBottom: tokens.spacing[4] }}>
           <Input
             type="password"
             placeholder="Password"
@@ -43,9 +45,9 @@ export default function LoginPage() {
         </div>
         {error && <Text color="danger">{error}</Text>}
         <Button onClick={handleLogin}>Login</Button>
-        <Text size="sm" style={{ marginTop: '16px' }}>
-          Sales: sales@example.com / password<br />
-          Manager: manager@example.com / password
+        <Text size="sm" style={{ marginTop: tokens.spacing[4] }}>
+          Sales: +919812345678 / password<br />
+          Manager: +919876543210 / password
         </Text>
       </Card>
     </AuthLayout>

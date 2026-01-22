@@ -5,3 +5,7 @@ export { Select } from './Select';
 export { Card } from './Card';
 export { Badge } from './Badge';
 export { ListItem } from './ListItem';
+export { DatePicker } from './DatePicker';
+export { BottomActionBar } from './BottomActionBar';
+export { Table } from './Table';
+export { Modal } from './Modal';
