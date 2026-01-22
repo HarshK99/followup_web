@@ -1,36 +1,100 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FollowUpX Web App
+
+A Next.js application with strict role-based route separation, reusable design system, and zero business coupling between sales and manager experiences.
+
+## Architecture Overview
+
+### Core Principles
+- **Role-based routing**: Role resolved once at login, immediate redirect to role home
+- **No shared pages**: Sales and manager routes are completely separate
+- **Layout selection by route group**: Sales (mobile-first), Manager (desktop-first)
+- **Zero coupling**: Sales and manager folders never import from each other
+- **Design system isolation**: No business logic in design-system, pure UI components
+- **Domain-driven structure**: Each domain owns routes, services, data access with minimal public interface
+
+### Folder Structure
+```
+app/
+  auth/          # Authentication routes
+  sales/         # Sales-specific routes
+  manager/       # Manager-specific routes
+core/
+  api/           # API utilities
+  auth/          # Authentication services
+  config/        # Configuration
+  utils/         # Shared utilities
+design-system/
+  tokens/        # Design tokens (colors, typography, spacing)
+  components/    # Base UI components
+  layouts/       # Layout components
+features/        # UI logic only, no routing
+vendor/          # Third-party integrations
+follow-up/       # Business-specific modules
+```
+
+### Routes
+- `/auth/*` - Authentication
+- `/sales/*` - Sales experience
+- `/manager/*` - Manager experience
+
+### Design System
+- **Tokens**: Colors, typography, spacing, border radius, shadows
+- **Components**: Button, Text, Input, Select, Card, Badge, ListItem
+- **Layouts**: AuthLayout, SalesLayout (mobile-first), ManagerLayout (desktop-first)
+
+## Strict Rules
+
+### Separation of Concerns
+- **sales** and **manager** folders never import from each other
+- **design-system** contains no business logic
+- **features** contain UI logic only, no routing
+- **core** contains no UI
+
+### Layer Boundaries
+- Routes handle HTTP only
+- Services contain business logic
+- Repositories handle all data access
+- No exceptions to these boundaries
+
+### Cross-cutting Concerns
+- Authentication, authorization, validation, error handling, logging centralized in core modules
+- Reused everywhere
+
+### Code Quality
+- **Zero duplication**: Any repeated logic extracted to shared utilities/services
+- **Single source of truth**: Enums, constants, config, validation schemas defined once
+- **Role logic isolation**: Role checks in auth guards/services, never scattered
+- **Pure utilities**: Stateless, deterministic, side-effect free
+- **Extensibility**: New domains/features added without modifying existing modules
+
+### Dependency Direction
+- Routes may depend on services
+- Services on repositories
+- Reverse/lateral dependencies forbidden
 
 ## Getting Started
 
-First, run the development server:
-
+1. Install dependencies:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Run development server:
+```bash
+npm run dev
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Open [http://localhost:3000](http://localhost:3000)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Login with test credentials:
+   - Sales: `sales@example.com` / `password`
+   - Manager: `manager@example.com` / `password`
 
-## Learn More
+## Development Guidelines
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Always check for existing shared utilities before implementing new logic
+- Use design system components for all UI
+- Keep business logic out of components and layouts
+- Test components in isolation from business logic
+- Follow the dependency direction strictly
+- Extract repeated code immediately
