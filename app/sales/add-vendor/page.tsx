@@ -12,6 +12,7 @@ export default function AddVendor() {
   const [phone, setPhone] = useState('');
   const [gst, setGst] = useState('');
   const [area, setArea] = useState('');
+  const [error, setError] = useState('');
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -21,9 +22,17 @@ export default function AddVendor() {
       queryClient.invalidateQueries({ queryKey: ['vendors'] });
       router.push('/sales');
     },
+    onError: (err: Error) => {
+      if (err.message === 'Unauthorized') {
+        router.push('/auth/login');
+      } else {
+        setError(err.message);
+      }
+    },
   });
 
   const handleSubmit = () => {
+    setError('');
     mutation.mutate({ name, phone, gst_number: gst, area });
   };
 
@@ -43,6 +52,7 @@ export default function AddVendor() {
         <div style={{ marginBottom: tokens.spacing[4] }}>
           <Input placeholder="Area" value={area} onChange={(e) => setArea(e.target.value)} />
         </div>
+        {error && <Text color="danger" style={{ marginBottom: tokens.spacing[4] }}>{error}</Text>}
         <Button onClick={handleSubmit} disabled={mutation.isPending}>
           {mutation.isPending ? 'Saving...' : 'Save'}
         </Button>

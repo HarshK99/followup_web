@@ -1,6 +1,6 @@
-import { getToken } from '../auth';
+import { getToken, clearSession } from '../auth';
 
-const API_BASE = 'mock'; // Replace with actual base URL
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000';
 
 interface ApiResponse<T> {
   data: T;
@@ -41,6 +41,11 @@ export class ApiClient {
       ...options,
       headers,
     });
+
+    if (response.status === 401) {
+      clearSession();
+      throw new Error('Unauthorized');
+    }
 
     if (!response.ok) {
       const errorData: ApiError = await response.json().catch(() => ({

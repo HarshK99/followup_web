@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Text, Card, Button, Table, Modal, DatePicker, Input } from '../../../design-system/components';
 import { getManagerFollowupsAPI, markOutcomeAPI, cancelFollowupAPI } from '../../../core/api/followups';
@@ -11,11 +12,13 @@ export default function FollowupsList() {
   const [selectedId, setSelectedId] = useState('');
   const [rescheduleDate, setRescheduleDate] = useState('');
   const [outcomeNote, setOutcomeNote] = useState('');
+  const [error, setError] = useState('');
+  const router = useRouter();
   const queryClient = useQueryClient();
 
-  const { data: followups = [] } = useQuery({
+  const { data: followups = [] as any[] } = useQuery({
     queryKey: ['manager-followups'],
-    queryFn: () => getManagerFollowupsAPI('all').then(res => res.data),
+    queryFn: () => getManagerFollowupsAPI('all').then((res: any) => res.data),
   });
 
   const outcomeMutation = useMutation({
@@ -26,6 +29,13 @@ export default function FollowupsList() {
       setRescheduleDate('');
       setOutcomeNote('');
     },
+    onError: (err: Error) => {
+      if (err.message === 'Unauthorized') {
+        router.push('/auth/login');
+      } else {
+        setError(err.message);
+      }
+    },
   });
 
   const cancelMutation = useMutation({
@@ -33,9 +43,17 @@ export default function FollowupsList() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['manager-followups'] });
     },
+    onError: (err: Error) => {
+      if (err.message === 'Unauthorized') {
+        router.push('/auth/login');
+      } else {
+        setError(err.message);
+      }
+    },
   });
 
   const handleOutcome = (id: string, outcome: string) => {
+    setError('');
     if (outcome === 'cancel') {
       cancelMutation.mutate(id);
     } else {
@@ -45,7 +63,7 @@ export default function FollowupsList() {
 
   const headers = ['Vendor', 'Salesperson', 'Reason', 'Date', 'Status', 'Actions'];
 
-  const rows = followups.map(f => [
+  const rows = followups.map((f: any) => [
     f.vendor_name,
     f.salesperson_name,
     f.reason,
@@ -61,6 +79,7 @@ export default function FollowupsList() {
   return (
     <div>
       <Text as="h1" size="xl" weight="bold">All Follow-ups</Text>
+      {error && <Text color="danger" style={{ marginBottom: tokens.spacing[4] }}>{error}</Text>}
       <Card>
         <Table headers={headers} rows={rows} />
       </Card>

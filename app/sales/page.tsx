@@ -11,12 +11,12 @@ export default function SalesHome() {
   const [filter, setFilter] = useState('all');
   const router = useRouter();
 
-  const { data: followups = [] } = useQuery({
+  const { data: followups = [] as any[] } = useQuery({
     queryKey: ['sales-followups'],
-    queryFn: () => getSalesFollowupsAPI().then(res => res.data),
+    queryFn: () => getSalesFollowupsAPI().then((res: any) => res.data),
   });
 
-  const filtered = followups.filter(f => {
+  const filtered = followups.filter((f: any) => {
     const today = new Date().toISOString().split('T')[0];
     if (filter === 'today') return f.follow_up_date === today;
     if (filter === 'past') return f.follow_up_date < today;
@@ -34,7 +34,7 @@ export default function SalesHome() {
         <Button variant={filter === 'upcoming' ? 'primary' : 'secondary'} onClick={() => setFilter('upcoming')}>Upcoming</Button>
       </div>
       <Card>
-        {filtered.map(f => (
+        {filtered.map((f: any) => (
           <ListItem key={f.id}>
             <Text>{f.vendor_name} - {f.reason} - {f.follow_up_date} - {f.status}</Text>
           </ListItem>

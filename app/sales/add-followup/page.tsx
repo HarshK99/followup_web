@@ -13,12 +13,13 @@ export default function AddFollowup() {
   const [reason, setReason] = useState('');
   const [date, setDate] = useState('');
   const [note, setNote] = useState('');
+  const [error, setError] = useState('');
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const { data: vendors = [] } = useQuery({
+  const { data: vendors = [] as any[] } = useQuery({
     queryKey: ['vendors'],
-    queryFn: () => getVendorsAPI().then(res => res.data),
+    queryFn: () => getVendorsAPI().then((res: any) => res.data),
   });
 
   const mutation = useMutation({
@@ -27,13 +28,21 @@ export default function AddFollowup() {
       queryClient.invalidateQueries({ queryKey: ['sales-followups'] });
       router.push('/sales');
     },
+    onError: (err: Error) => {
+      if (err.message === 'Unauthorized') {
+        router.push('/auth/login');
+      } else {
+        setError(err.message);
+      }
+    },
   });
 
   const handleSubmit = () => {
+    setError('');
     mutation.mutate({ vendor_id: vendorId, reason, follow_up_date: date, note });
   };
 
-  const vendorOptions = vendors.map(v => ({ value: v.id, label: v.name }));
+  const vendorOptions = vendors.map((v: any) => ({ value: v.id, label: v.name }));
   const reasonOptions = [
     { value: 'promised_order', label: 'Promised Order' },
     { value: 'follow_up', label: 'Follow Up' },
@@ -57,6 +66,7 @@ export default function AddFollowup() {
         <div style={{ marginBottom: tokens.spacing[4] }}>
           <Input placeholder="Note" value={note} onChange={(e) => setNote(e.target.value)} />
         </div>
+        {error && <Text color="danger" style={{ marginBottom: tokens.spacing[4] }}>{error}</Text>}
         <Button onClick={handleSubmit} disabled={mutation.isPending}>
           {mutation.isPending ? 'Saving...' : 'Save'}
         </Button>
