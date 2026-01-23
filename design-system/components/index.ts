@@ -1,4 +1,5 @@
 export { Button } from './Button';
+export { BackButton } from './BackButton';
 export { Text } from './Text';
 export { Input } from './Input';
 export { Select } from './Select';

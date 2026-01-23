@@ -18,7 +18,6 @@ export interface Vendor {
 export interface VisitFormData {
   vendor: Vendor | null;
   visit_type: VisitType;
-  note: string;
   // Follow-up fields
   response?: 'interested' | 'not_interested';
   potential_score?: number;
@@ -47,7 +46,6 @@ export interface VisitFormActions {
 const initialFormData: VisitFormData = {
   vendor: null,
   visit_type: 'follow_up',
-  note: '',
 };
 
 export function useVisitForm(): VisitFormState & VisitFormActions {
@@ -172,7 +170,6 @@ export function useVisitForm(): VisitFormState & VisitFormActions {
           },
       visit: {
         visit_type: formData.visit_type,
-        note: formData.note || undefined,
       },
     };
 

@@ -1,6 +1,7 @@
 'use client';
 
-import { Text, Card, Button } from '../../../design-system/components';
+import { useRouter } from 'next/navigation';
+import { Text, Card, Button, BackButton } from '../../../design-system/components';
 import { tokens } from '../../../design-system/tokens';
 import { useVisitForm } from '../../../core/hooks/useVisitForm';
 import {
@@ -12,6 +13,7 @@ import {
 } from '../../../features/visit';
 
 export default function AddVisit() {
+  const router = useRouter();
   const {
     data: formData,
     selectedVendorOption,
@@ -23,11 +25,23 @@ export default function AddVisit() {
     submit,
   } = useVisitForm();
 
+  const handleBack = () => {
+    router.push('/sales');
+  };
+
   return (
-    <div style={{ padding: tokens.spacing[6] }}>
-      <Text as="h1" size="xl" weight="bold" style={{ marginBottom: tokens.spacing[8] }}>
-        Add New Visit
-      </Text>
+    <div style={{ padding: tokens.spacing[1] }}>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: tokens.spacing[4],
+        marginBottom: tokens.spacing[6]
+      }}>
+        <BackButton onClick={handleBack} />
+        <Text as="h1" size="xl" weight="bold">
+          Add New Visit
+        </Text>
+      </div>
 
       <div style={{ marginBottom: tokens.spacing[6] }}>
         <Card padding={6}>
@@ -45,9 +59,7 @@ export default function AddVisit() {
         <Card padding={6}>
           <VisitDetails
             visitType={formData.visit_type}
-            note={formData.note}
             onVisitTypeChange={(value) => updateForm({ visit_type: value })}
-            onNoteChange={(value) => updateForm({ note: value })}
           />
         </Card>
       </div>
