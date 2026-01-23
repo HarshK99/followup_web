@@ -1,0 +1,1 @@
+export const VISIT_EVENTS_DEFAULT_LIMIT = 20;
