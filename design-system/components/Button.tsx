@@ -7,6 +7,7 @@ interface ButtonProps {
   size?: 'sm' | 'md' | 'lg';
   onClick?: () => void;
   disabled?: boolean;
+  fullWidth?: boolean;
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -15,7 +16,11 @@ export const Button: React.FC<ButtonProps> = ({
   size = 'md',
   onClick,
   disabled = false,
+  fullWidth,
 }) => {
+  // Primary buttons default to full width, others default to false
+  const shouldBeFullWidth = fullWidth !== undefined ? fullWidth : variant === 'primary';
+
   const baseStyle: React.CSSProperties = {
     border: 'none',
     borderRadius: tokens.borderRadius.md,
@@ -23,6 +28,8 @@ export const Button: React.FC<ButtonProps> = ({
     fontFamily: tokens.typography.fontFamily,
     fontWeight: tokens.typography.fontWeight.medium,
     transition: 'background-color 0.2s',
+    width: shouldBeFullWidth ? '100%' : 'auto',
+    display: shouldBeFullWidth ? 'block' : 'inline-block',
   };
 
   const variantStyles = {

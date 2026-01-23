@@ -10,6 +10,7 @@ export const tokens = {
     dark: '#343a40',
     white: '#ffffff',
     black: '#000000',
+    subtle: '#e9ecef', // Added for input bottom border default state
   },
   typography: {
     fontFamily: 'Arial, sans-serif',
@@ -50,6 +51,10 @@ export const tokens = {
     md: '8px',
     lg: '12px',
     full: '9999px',
+  },
+  borderWidth: {
+    thin: '1px',
+    medium: '2px',
   },
   shadows: {
     none: 'none',
