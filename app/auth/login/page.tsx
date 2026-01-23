@@ -14,11 +14,14 @@ export default function LoginPage() {
   const router = useRouter();
 
   const handleLogin = async () => {
+    console.log('Login button clicked with phone:', phone, 'password length:', password.length);
     const result = await login(phone, password);
+    console.log('Login result:', result);
     if (result) {
       setSession({ token: result.token, user: result.user });
       router.push(getRoleHome(result.user.role));
     } else {
+      console.log('Login failed - showing invalid credentials');
       setError('Invalid credentials');
     }
   };

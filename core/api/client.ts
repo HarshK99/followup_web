@@ -1,6 +1,6 @@
 import { getToken, clearSession } from '../auth';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000';
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001';
 
 interface ApiResponse<T> {
   data: T;
@@ -58,7 +58,7 @@ export class ApiClient {
     return data;
   }
 
-  async publicPost<T>(endpoint: string, body?: any): Promise<ApiResponse<T>> {
+  async publicPost<T>(endpoint: string, body?: any): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
 
     const response = await fetch(url, {
@@ -76,7 +76,7 @@ export class ApiClient {
       throw new Error(errorData.error.message);
     }
 
-    const data: ApiResponse<T> = await response.json();
+    const data: T = await response.json();
     return data;
   }
 

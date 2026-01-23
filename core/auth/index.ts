@@ -41,7 +41,7 @@ export const getToken = (): string | null => {
 export const login = async (phone_number: string, password: string): Promise<{token: string, user: User} | null> => {
   try {
     const res = await loginAPI(phone_number, password);
-    return res.data as {token: string, user: User};
+    return res as {token: string, user: User};
   } catch {
     return null;
   }
