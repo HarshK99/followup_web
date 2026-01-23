@@ -9,7 +9,6 @@ import {
   VisitDetails,
   FollowUpOutcome,
   OrderOutcome,
-  NoOutcome,
 } from '../../../features/visit';
 
 export default function AddVisit() {
@@ -90,8 +89,6 @@ export default function AddVisit() {
               onNoteChange={(value: string) => updateForm({ order_note: value })}
             />
           )}
-
-          {formData.visit_type === 'no_outcome' && <NoOutcome />}
         </Card>
       </div>
 

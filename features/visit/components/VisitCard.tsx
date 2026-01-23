@@ -13,8 +13,6 @@ const getVisitTypeLabel = (visitType: string): string => {
       return 'Follow-up';
     case 'order':
       return 'Order';
-    case 'no_outcome':
-      return 'Visit';
     default:
       return visitType;
   }
@@ -26,8 +24,6 @@ const getVisitTypeVariant = (visitType: string): 'primary' | 'secondary' | 'succ
       return 'primary';
     case 'order':
       return 'success';
-    case 'no_outcome':
-      return 'secondary';
     default:
       return 'secondary';
   }

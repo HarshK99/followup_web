@@ -4,6 +4,7 @@ export { Text } from './Text';
 export { Input } from './Input';
 export { Select } from './Select';
 export { SearchSelect } from './SearchSelect';
+export { SegmentedControl } from './SegmentedControl';
 export { Card } from './Card';
 export { Badge } from './Badge';
 export { ListItem } from './ListItem';

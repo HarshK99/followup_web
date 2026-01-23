@@ -4,7 +4,7 @@ export interface VisitEvent {
     id: string;
     name: string;
   };
-  visit_type: 'follow_up' | 'order' | 'no_outcome';
+  visit_type: 'follow_up' | 'order';
   note?: string;
   created_at: string;
 }

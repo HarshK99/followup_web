@@ -1,5 +1,5 @@
 import React from 'react';
-import { Select, Text } from '../../design-system/components';
+import { SegmentedControl, Text } from '../../design-system/components';
 import { tokens } from '../../design-system/tokens';
 import type { VisitType } from '../../core/hooks/useVisitForm';
 
@@ -9,9 +9,8 @@ interface VisitDetailsProps {
 }
 
 const visitTypeOptions = [
-  { value: 'follow_up', label: 'Follow-up Visit' },
-  { value: 'order', label: 'Order Visit' },
-  { value: 'no_outcome', label: 'Visit (No Specific Outcome)' },
+  { value: 'follow_up', label: 'Follow-up' },
+  { value: 'order', label: 'Order' },
 ];
 
 export function VisitDetails({ visitType, onVisitTypeChange }: VisitDetailsProps) {
@@ -22,11 +21,10 @@ export function VisitDetails({ visitType, onVisitTypeChange }: VisitDetailsProps
       </Text>
 
       <div style={{ marginBottom: tokens.spacing[4] }}>
-        <Select
+        <SegmentedControl
           options={visitTypeOptions}
           value={visitType}
-          placeholder="Select visit type"
-          onChange={(e) => onVisitTypeChange(e.target.value as VisitType)}
+          onChange={(value) => onVisitTypeChange(value as VisitType)}
         />
       </div>
     </div>

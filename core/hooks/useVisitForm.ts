@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getVendorsAPI } from '../api/vendors';
 import { createVisitAPI } from '../api/followups';
 
-export type VisitType = 'order' | 'follow_up' | 'no_outcome';
+export type VisitType = 'order' | 'follow_up';
 
 export interface Vendor {
   id?: string;

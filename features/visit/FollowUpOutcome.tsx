@@ -1,5 +1,5 @@
 import React from 'react';
-import { Select, Input, Text } from '../../design-system/components';
+import { SegmentedControl, Input, Text } from '../../design-system/components';
 import { tokens } from '../../design-system/tokens';
 
 interface FollowUpOutcomeProps {
@@ -42,13 +42,12 @@ export function FollowUpOutcome({
       </Text>
 
       <div style={{ marginBottom: tokens.spacing[4] }}>
-        <Select
+        <SegmentedControl
           options={responseOptions}
           value={response || ''}
-          placeholder="Select response"
-          onChange={(e) => {
-            console.log('📝 Response changed:', e.target.value);
-            onResponseChange(e.target.value as 'interested' | 'not_interested');
+          onChange={(value) => {
+            console.log('📝 Response changed:', value);
+            onResponseChange(value as 'interested' | 'not_interested');
           }}
         />
       </div>
