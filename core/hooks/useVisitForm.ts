@@ -73,7 +73,7 @@ export function useVisitForm(): VisitFormState & VisitFormActions {
   const submitMutation = useMutation({
     mutationFn: (visitData: any) => createVisitAPI(visitData),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['sales-followups'] });
+      queryClient.invalidateQueries({ queryKey: ['sales-visit-events'] });
       queryClient.invalidateQueries({ queryKey: ['vendors'] });
       router.push('/sales');
     },

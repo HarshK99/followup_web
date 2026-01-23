@@ -4,30 +4,31 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { Text, Card, Button, ListItem, BottomActionBar } from '../../design-system/components';
-import { getSalesFollowupsAPI } from '../../core/api/followups';
+import { getSalesVisitEventsAPI } from '../../core/api/visit-events';
 import { tokens } from '../../design-system/tokens';
 
 export default function SalesHome() {
   const [filter, setFilter] = useState('all');
   const router = useRouter();
 
-  const { data: followups = [] as any[] } = useQuery({
-    queryKey: ['sales-followups'],
-    queryFn: () => getSalesFollowupsAPI().then((res: any) => {
+  const { data: visitEvents = [] as any[] } = useQuery({
+    queryKey: ['sales-visit-events'],
+    queryFn: () => getSalesVisitEventsAPI().then((res: any) => {
       // Handle different response structures
+      if (res?.visitEvents && Array.isArray(res.visitEvents)) return res.visitEvents;
       if (res?.data && Array.isArray(res.data)) return res.data;
-      if (res?.followups && Array.isArray(res.followups)) return res.followups;
       if (Array.isArray(res)) return res;
-      console.warn('Unexpected followups API response structure:', res);
+      console.warn('Unexpected visit events API response structure:', res);
       return [];
     }),
   });
 
-  const filtered = followups.filter((f: any) => {
+  const filtered = visitEvents.filter((visit: any) => {
     const today = new Date().toISOString().split('T')[0];
-    if (filter === 'today') return f.follow_up_date === today;
-    if (filter === 'past') return f.follow_up_date < today;
-    if (filter === 'upcoming') return f.follow_up_date > today;
+    const visitDate = new Date(visit.created_at).toISOString().split('T')[0];
+    if (filter === 'today') return visitDate === today;
+    if (filter === 'past') return visitDate < today;
+    if (filter === 'upcoming') return visitDate > today;
     return true;
   });
 
@@ -41,9 +42,9 @@ export default function SalesHome() {
         <Button variant={filter === 'upcoming' ? 'primary' : 'secondary'} onClick={() => setFilter('upcoming')}>Upcoming</Button>
       </div>
       <Card>
-        {filtered.map((f: any) => (
-          <ListItem key={f.id}>
-            <Text>{f.vendor_name} - {f.reason} - {f.follow_up_date} - {f.status}</Text>
+        {filtered.map((visit: any) => (
+          <ListItem key={visit.id}>
+            <Text>{visit.vendor.name} - {visit.visit_type} - {new Date(visit.created_at).toLocaleDateString()}</Text>
           </ListItem>
         ))}
       </Card>
