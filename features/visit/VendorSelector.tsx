@@ -45,11 +45,18 @@ export function VendorSelector({
       const selectedVendor = vendors.find((v: VendorItem) => v.id === selectedVendorOption);
       return selectedVendor?.name || '';
     }
-    return searchValue;
+    return searchValue; // Show search value when searching or empty
   }, [selectedVendorOption, vendors, searchValue, isNewVendorMode]);
 
   const handleSearchChange = (value: string) => {
     setSearchValue(value);
+    // If we have a selected vendor and user types something different, clear selection
+    if (selectedVendorOption && selectedVendorOption !== 'new') {
+      const selectedVendor = vendors.find((v: VendorItem) => v.id === selectedVendorOption);
+      if (selectedVendor && value !== selectedVendor.name) {
+        onVendorSelect('');
+      }
+    }
   };
 
   const handleVendorSelect = (item: { id: string; label: string }) => {
