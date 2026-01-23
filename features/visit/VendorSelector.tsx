@@ -1,10 +1,16 @@
-import React from 'react';
-import { Select, Input, Text } from '../../design-system/components';
+import React, { useState, useMemo } from 'react';
+import { SearchSelect, Text } from '../../design-system/components';
 import { tokens } from '../../design-system/tokens';
+import { NewVendorForm } from './NewVendorForm';
 import type { Vendor } from '../../core/hooks/useVisitForm';
 
+interface VendorItem {
+  id: string;
+  name: string;
+}
+
 interface VendorSelectorProps {
-  vendors: any[];
+  vendors: VendorItem[];
   selectedVendorOption: string;
   vendor: Vendor | null;
   onVendorSelect: (vendorId: string) => void;
@@ -18,10 +24,50 @@ export function VendorSelector({
   onVendorSelect,
   onVendorUpdate,
 }: VendorSelectorProps) {
-  const vendorOptions = [
-    ...vendors.map((v: any) => ({ value: v.id, label: v.name })),
-    { value: 'new', label: '+ Add New Vendor' },
-  ];
+  const [searchValue, setSearchValue] = useState('');
+
+  // Map vendors to SearchSelect items
+  const vendorItems = useMemo(() =>
+    vendors.map((v: VendorItem) => ({ id: v.id, label: v.name })),
+    [vendors]
+  );
+
+  // Determine if we're in new vendor mode
+  const isNewVendorMode = selectedVendorOption === 'new';
+
+  // Get the display value for SearchSelect
+  const displayValue = useMemo(() => {
+    if (isNewVendorMode) {
+      return searchValue; // Show the typed value when adding new
+    }
+    if (selectedVendorOption && !isNewVendorMode) {
+      // Show selected vendor name
+      const selectedVendor = vendors.find((v: VendorItem) => v.id === selectedVendorOption);
+      return selectedVendor?.name || '';
+    }
+    return searchValue;
+  }, [selectedVendorOption, vendors, searchValue, isNewVendorMode]);
+
+  const handleSearchChange = (value: string) => {
+    setSearchValue(value);
+  };
+
+  const handleVendorSelect = (item: { id: string; label: string }) => {
+    setSearchValue(''); // Clear search when selecting
+    onVendorSelect(item.id);
+  };
+
+  const handleAddNew = (query: string) => {
+    setSearchValue(query); // Prefill the search value as vendor name
+    onVendorSelect('new');
+    // Prefill the vendor name with the search query
+    onVendorUpdate('name', query);
+  };
+
+  const handleQuickAdd = () => {
+    setSearchValue(''); // Clear search for new vendor
+    onVendorSelect('new');
+  };
 
   return (
     <div style={{ marginBottom: tokens.spacing[6] }}>
@@ -30,64 +76,28 @@ export function VendorSelector({
       </Text>
 
       <div style={{ marginBottom: tokens.spacing[4] }}>
-        <Select
-          options={vendorOptions}
-          value={selectedVendorOption}
-          placeholder="Choose a vendor or add new"
-          onChange={(e) => onVendorSelect(e.target.value)}
+        <SearchSelect
+          value={displayValue}
+          onChange={handleSearchChange}
+          items={vendorItems}
+          onSelect={handleVendorSelect}
+          onAddNew={handleAddNew}
+          placeholder="Search vendors..."
+          rightAction={{
+            icon: '+',
+            onClick: handleQuickAdd,
+            ariaLabel: 'Add new vendor'
+          }}
+          emptyStateLabel="No vendors found"
+          addNewLabel={(query) => `Add "${query}" as new vendor`}
         />
       </div>
 
-      {selectedVendorOption === 'new' && vendor && (
-        <div style={{
-          padding: tokens.spacing[4],
-          backgroundColor: tokens.colors.light,
-          borderRadius: tokens.borderRadius.md
-        }}>
-          <Text as="h3" size="sm" weight="bold" style={{ marginBottom: tokens.spacing[3] }}>
-            New Vendor Details
-          </Text>
-
-          <div style={{ marginBottom: tokens.spacing[3] }}>
-            <Input
-              placeholder="Vendor Name *"
-              value={vendor.name}
-              onChange={(e) => onVendorUpdate('name', e.target.value)}
-            />
-          </div>
-
-          <div style={{ marginBottom: tokens.spacing[3] }}>
-            <Input
-              placeholder="Phone"
-              value={vendor.phone || ''}
-              onChange={(e) => onVendorUpdate('phone', e.target.value)}
-            />
-          </div>
-
-          <div style={{ marginBottom: tokens.spacing[3] }}>
-            <Input
-              placeholder="Area"
-              value={vendor.area || ''}
-              onChange={(e) => onVendorUpdate('area', e.target.value)}
-            />
-          </div>
-
-          <div style={{ marginBottom: tokens.spacing[3] }}>
-            <Input
-              placeholder="City"
-              value={vendor.city || ''}
-              onChange={(e) => onVendorUpdate('city', e.target.value)}
-            />
-          </div>
-
-          <div style={{ marginBottom: tokens.spacing[3] }}>
-            <Input
-              placeholder="State"
-              value={vendor.state || ''}
-              onChange={(e) => onVendorUpdate('state', e.target.value)}
-            />
-          </div>
-        </div>
+      {isNewVendorMode && vendor && (
+        <NewVendorForm
+          vendor={vendor}
+          onVendorUpdate={onVendorUpdate}
+        />
       )}
     </div>
   );
