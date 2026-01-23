@@ -7,6 +7,7 @@ export { SearchSelect } from './SearchSelect';
 export { Card } from './Card';
 export { Badge } from './Badge';
 export { ListItem } from './ListItem';
+export { ListDivider } from './ListDivider';
 export { DatePicker } from './DatePicker';
 export { BottomActionBar } from './BottomActionBar';
 export { Table } from './Table';

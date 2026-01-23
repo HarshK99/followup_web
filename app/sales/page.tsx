@@ -3,27 +3,22 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
-import { Text, Card, Button, ListItem, BottomActionBar } from '../../design-system/components';
+import { Text, Button, BottomActionBar } from '../../design-system/components';
+import { VisitList } from '../../features/visit';
 import { getSalesVisitEventsAPI } from '../../core/api/visit-events';
 import { tokens } from '../../design-system/tokens';
+import { VisitEvent } from '../../core/types/visit';
 
 export default function SalesHome() {
   const [filter, setFilter] = useState('all');
   const router = useRouter();
 
-  const { data: visitEvents = [] as any[] } = useQuery({
+  const { data: visitEvents = [] } = useQuery({
     queryKey: ['sales-visit-events'],
-    queryFn: () => getSalesVisitEventsAPI().then((res: any) => {
-      // Handle different response structures
-      if (res?.visitEvents && Array.isArray(res.visitEvents)) return res.visitEvents;
-      if (res?.data && Array.isArray(res.data)) return res.data;
-      if (Array.isArray(res)) return res;
-      console.warn('Unexpected visit events API response structure:', res);
-      return [];
-    }),
+    queryFn: getSalesVisitEventsAPI,
   });
 
-  const filtered = visitEvents.filter((visit: any) => {
+  const filtered = visitEvents.filter((visit: VisitEvent) => {
     const today = new Date().toISOString().split('T')[0];
     const visitDate = new Date(visit.created_at).toISOString().split('T')[0];
     if (filter === 'today') return visitDate === today;
@@ -41,13 +36,9 @@ export default function SalesHome() {
         <Button variant={filter === 'past' ? 'primary' : 'secondary'} onClick={() => setFilter('past')}>Past</Button>
         <Button variant={filter === 'upcoming' ? 'primary' : 'secondary'} onClick={() => setFilter('upcoming')}>Upcoming</Button>
       </div>
-      <Card>
-        {filtered.map((visit: any) => (
-          <ListItem key={visit.id}>
-            <Text>{visit.vendor.name} - {visit.visit_type} - {new Date(visit.created_at).toLocaleDateString()}</Text>
-          </ListItem>
-        ))}
-      </Card>
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <VisitList visits={filtered} />
+      </div>
       <BottomActionBar>
         <Button onClick={() => router.push('/sales/add-visit')}>Add Visit</Button>
       </BottomActionBar>
