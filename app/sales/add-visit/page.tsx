@@ -43,12 +43,12 @@ export default function AddVisit() {
     note: '',
   });
 
-  const [isCreatingVendor, setIsCreatingVendor] = useState(false);
+  const [selectedVendorOption, setSelectedVendorOption] = useState<string>('');
   const [error, setError] = useState('');
 
   const { data: vendors = [] as any[] } = useQuery({
     queryKey: ['vendors'],
-    queryFn: () => getVendorsAPI().then((res: any) => res.data),
+    queryFn: () => getVendorsAPI().then((res: any) => res.data.vendors),
   });
 
   const visitMutation = useMutation({
@@ -72,8 +72,9 @@ export default function AddVisit() {
   };
 
   const handleVendorSelect = (vendorId: string) => {
+    setSelectedVendorOption(vendorId);
+    
     if (vendorId === 'new') {
-      setIsCreatingVendor(true);
       updateForm({
         vendor: { name: '', phone: '', area: '', city: '', state: '' }
       });
@@ -84,7 +85,6 @@ export default function AddVisit() {
           vendor: { id: vendor.id, name: vendor.name }
         });
       }
-      setIsCreatingVendor(false);
     }
   };
 
@@ -198,12 +198,12 @@ export default function AddVisit() {
           <div style={{ marginBottom: tokens.spacing[4] }}>
             <Select
               options={vendorOptions}
-              value={form.vendor?.id || (isCreatingVendor ? 'new' : '')}
+              value={selectedVendorOption}
               onChange={(e) => handleVendorSelect(e.target.value)}
             />
           </div>
 
-          {isCreatingVendor && form.vendor && (
+          {selectedVendorOption === 'new' && form.vendor && (
             <div style={{ padding: tokens.spacing[4], backgroundColor: tokens.colors.light, borderRadius: tokens.borderRadius.md }}>
               <Text as="h3" size="sm" weight="bold" style={{ marginBottom: tokens.spacing[3] }}>
                 New Vendor Details
