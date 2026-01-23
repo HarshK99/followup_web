@@ -41,7 +41,7 @@ export default function SalesHome() {
         ))}
       </Card>
       <BottomActionBar>
-        <Button onClick={() => router.push('/sales/add-followup')}>Add Follow-up</Button>
+        <Button onClick={() => router.push('/sales/add-visit')}>Add Visit</Button>
       </BottomActionBar>
     </div>
   );

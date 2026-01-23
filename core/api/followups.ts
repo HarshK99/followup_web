@@ -1,5 +1,9 @@
 import { apiClient } from './client';
 
+export const createVisitAPI = async (visit: any) => {
+  return apiClient.post('/visits', visit);
+};
+
 export const createFollowupAPI = async (followup: any) => {
   return apiClient.post('/follow-ups', followup);
 };
