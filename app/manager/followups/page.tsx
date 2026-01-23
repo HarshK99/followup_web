@@ -18,7 +18,7 @@ export default function FollowupsList() {
 
   const { data: followups = [] as any[] } = useQuery({
     queryKey: ['manager-followups'],
-    queryFn: () => getManagerFollowupsAPI('all').then((res: any) => res.data),
+    queryFn: () => getManagerFollowupsAPI('all').then((res: any) => res.data || res),
   });
 
   const outcomeMutation = useMutation({

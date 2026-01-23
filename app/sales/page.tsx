@@ -13,7 +13,7 @@ export default function SalesHome() {
 
   const { data: followups = [] as any[] } = useQuery({
     queryKey: ['sales-followups'],
-    queryFn: () => getSalesFollowupsAPI().then((res: any) => res.data),
+    queryFn: () => getSalesFollowupsAPI().then((res: any) => res.data || res),
   });
 
   const filtered = followups.filter((f: any) => {

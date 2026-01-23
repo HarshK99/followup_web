@@ -1,0 +1,111 @@
+Refactor or implement the given page/feature so that the codebase remains modular, reusable, and scalable, with zero duplication and strict separation of concerns.
+
+
+## Core objectives
+
+### 1. Page as orchestration only
+
+* Page files must act only as composition layers
+* Pages may:
+
+  * Compose components
+  * Wire hooks
+  * Trigger mutations or queries
+* Pages must NOT:
+
+  * Hold business logic
+  * Perform validation
+  * Construct API payloads
+  * Contain complex conditional flows
+
+---
+
+### 2. Extract logic into hooks
+
+* All state, validation, transformation, and submission logic must live in custom hooks
+* Hooks should:
+
+  * Own form state
+  * Expose setters and handlers
+  * Perform validation
+  * Build API-ready payloads
+* Hooks must be reusable and testable in isolation
+
+---
+
+### 3. Break UI into reusable components
+
+* Extract repeated or logical UI sections into components
+* Components should:
+
+  * Be small and focused
+  * Accept props, not own business logic
+  * Be reusable across pages where possible
+* No “giant components” with mixed responsibilities
+
+---
+
+### 4. Design system is mandatory
+
+* Remove all inline styles
+* All spacing, colors, typography, borders must come from the design system
+* Use or introduce layout primitives such as:
+
+  * Stack
+  * Section
+  * Spacer
+  * Divider
+* Raw CSS or ad-hoc styling is not allowed outside the design system
+
+---
+
+### 5. Eliminate duplication
+
+* Any duplicated logic, markup, or patterns must be extracted
+* Common patterns should live in:
+
+  * design-system for UI
+  * shared hooks for logic
+* Copy-paste is explicitly forbidden
+
+---
+
+## Architectural guardrails (non-negotiable)
+
+* No direct `fetch` calls in pages or components
+* All API interaction goes through the centralized API client
+* No business logic in UI components
+* No role checks inside shared components
+* No cross-imports between role modules (sales ↔ manager)
+* No global state for domain data
+* Existing folder structure must be preserved
+
+---
+
+## What NOT to do
+
+* Do not change API contracts
+* Do not change backend expectations
+* Do not add new features
+* Do not redesign UI visually
+* Do not introduce global stores
+* Do not loosen architecture rules to “make it work”
+
+---
+
+## Expected outcomes
+
+After applying this refactor or implementation:
+
+* Pages read like flow orchestration, not logic
+* Components are reusable and role-agnostic
+* Hooks encapsulate all complexity
+* The design system fully controls UI consistency
+* Future changes require extension, not modification
+
+---
+
+## Quality bar
+
+If the same pattern appears twice, it must be abstracted.
+If logic cannot be cleanly extracted, stop and explain why instead of forcing it.

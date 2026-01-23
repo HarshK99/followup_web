@@ -12,7 +12,7 @@ export default function ManagerHome() {
 
   const { data: followups = [] as any[] } = useQuery({
     queryKey: ['manager-followups'],
-    queryFn: () => getManagerFollowupsAPI('all').then((res: any) => res.data),
+    queryFn: () => getManagerFollowupsAPI('all').then((res: any) => res.data || res),
   });
 
   const todayStr = new Date().toISOString().split('T')[0];
