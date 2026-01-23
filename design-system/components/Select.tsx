@@ -6,6 +6,7 @@ interface SelectProps {
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   disabled?: boolean;
+  placeholder?: string;
 }
 
 export const Select: React.FC<SelectProps> = ({
@@ -13,6 +14,7 @@ export const Select: React.FC<SelectProps> = ({
   value,
   onChange,
   disabled = false,
+  placeholder = 'Select an option',
 }) => {
   const style: React.CSSProperties = {
     fontFamily: tokens.typography.fontFamily,
@@ -27,6 +29,7 @@ export const Select: React.FC<SelectProps> = ({
 
   return (
     <select value={value} onChange={onChange} disabled={disabled} style={style}>
+      {!value && <option value="" disabled>{placeholder}</option>}
       {options.map((option) => (
         <option key={option.value} value={option.value}>
           {option.label}

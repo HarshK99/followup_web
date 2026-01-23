@@ -28,6 +28,13 @@ export function FollowUpOutcome({
   onFollowUpDaysChange,
   onFollowUpNoteChange,
 }: FollowUpOutcomeProps) {
+  console.log('🎨 FollowUpOutcome rendered with props:', {
+    response,
+    potentialScore,
+    followUpDays,
+    followUpNote
+  });
+
   return (
     <div style={{ marginBottom: tokens.spacing[6] }}>
       <Text as="h2" size="md" weight="bold" style={{ marginBottom: tokens.spacing[3] }}>
@@ -38,7 +45,11 @@ export function FollowUpOutcome({
         <Select
           options={responseOptions}
           value={response || ''}
-          onChange={(e) => onResponseChange(e.target.value as 'interested' | 'not_interested')}
+          placeholder="Select response"
+          onChange={(e) => {
+            console.log('📝 Response changed:', e.target.value);
+            onResponseChange(e.target.value as 'interested' | 'not_interested');
+          }}
         />
       </div>
 
@@ -46,7 +57,10 @@ export function FollowUpOutcome({
         <Input
           placeholder="Potential score (0-10)"
           value={potentialScore?.toString() || ''}
-          onChange={(e) => onPotentialScoreChange(parseInt(e.target.value) || undefined)}
+          onChange={(e) => {
+            console.log('📝 Potential score changed:', e.target.value);
+            onPotentialScoreChange(parseInt(e.target.value) || undefined);
+          }}
         />
       </div>
 

@@ -89,7 +89,12 @@ export function useVisitForm(): VisitFormState & VisitFormActions {
   });
 
   const updateForm = (updates: Partial<VisitFormData>) => {
-    setFormData(prev => ({ ...prev, ...updates }));
+    console.log('📝 Updating form data:', updates);
+    setFormData(prev => {
+      const newData = { ...prev, ...updates };
+      console.log('📊 New form data:', newData);
+      return newData;
+    });
   };
 
   const updateVendor = (field: keyof Vendor, value: string) => {
@@ -116,23 +121,39 @@ export function useVisitForm(): VisitFormState & VisitFormActions {
   };
 
   const validateForm = (): string | null => {
+    console.log('🔍 Validating form data:', formData);
+
     if (!formData.vendor?.name?.trim()) {
+      console.log('❌ Validation failed: Vendor name is required');
       return 'Vendor name is required';
     }
 
     if (formData.visit_type === 'follow_up') {
+      console.log('📋 Validating follow-up fields:', {
+        response: formData.response,
+        potential_score: formData.potential_score
+      });
+
       if (!formData.response) {
+        console.log('❌ Validation failed: Please select a response for the follow-up');
         return 'Please select a response for the follow-up';
       }
       if (formData.potential_score === undefined || formData.potential_score < 0 || formData.potential_score > 10) {
+        console.log('❌ Validation failed: Please provide a valid potential score (0-10)');
         return 'Please provide a valid potential score (0-10)';
       }
     } else if (formData.visit_type === 'order') {
+      console.log('📋 Validating order fields:', {
+        order_status: formData.order_status
+      });
+
       if (!formData.order_status) {
+        console.log('❌ Validation failed: Please select an order status');
         return 'Please select an order status';
       }
     }
 
+    console.log('✅ Validation passed');
     return null;
   };
 
@@ -173,19 +194,27 @@ export function useVisitForm(): VisitFormState & VisitFormActions {
   };
 
   const submit = async () => {
+    console.log('🚀 Submit button clicked');
+    console.log('📊 Current form data:', formData);
+
     setError(null);
     const validationError = validateForm();
     if (validationError) {
+      console.log('❌ Submit blocked by validation:', validationError);
       setError(validationError);
       return;
     }
 
     const payload = buildVisitPayload();
+    console.log('📦 Built payload:', payload);
+
     if (!payload) {
+      console.log('❌ Submit blocked: No payload generated');
       setError('Please fill in all required fields');
       return;
     }
 
+    console.log('📡 Making API call...');
     await submitMutation.mutateAsync(payload);
   };
 

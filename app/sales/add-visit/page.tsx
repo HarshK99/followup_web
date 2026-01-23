@@ -60,7 +60,10 @@ export default function AddVisit() {
               potentialScore={formData.potential_score}
               followUpDays={formData.follow_up_days}
               followUpNote={formData.follow_up_note}
-              onResponseChange={(value) => updateForm({ response: value })}
+              onResponseChange={(value) => {
+                console.log('📝 Page: onResponseChange called with:', value);
+                updateForm({ response: value });
+              }}
               onPotentialScoreChange={(value) => updateForm({ potential_score: value })}
               onFollowUpDaysChange={(value) => updateForm({ follow_up_days: value })}
               onFollowUpNoteChange={(value) => updateForm({ follow_up_note: value })}
@@ -97,7 +100,10 @@ export default function AddVisit() {
         <div style={{ flex: 1 }}>
           <Button
             variant="primary"
-            onClick={submit}
+            onClick={() => {
+              console.log('🔘 Create Visit button clicked in page component');
+              submit();
+            }}
             disabled={isSubmitting}
           >
             {isSubmitting ? 'Creating Visit...' : 'Create Visit'}

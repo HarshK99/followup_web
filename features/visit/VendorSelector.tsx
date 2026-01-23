@@ -33,6 +33,7 @@ export function VendorSelector({
         <Select
           options={vendorOptions}
           value={selectedVendorOption}
+          placeholder="Choose a vendor or add new"
           onChange={(e) => onVendorSelect(e.target.value)}
         />
       </div>

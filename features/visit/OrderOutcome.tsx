@@ -30,6 +30,7 @@ export function OrderOutcome({
         <Select
           options={orderStatusOptions}
           value={status || ''}
+          placeholder="Select order status"
           onChange={(e) => onStatusChange(e.target.value as 'placed' | 'promised')}
         />
       </div>

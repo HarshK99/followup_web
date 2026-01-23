@@ -32,6 +32,7 @@ export function VisitDetails({
         <Select
           options={visitTypeOptions}
           value={visitType}
+          placeholder="Select visit type"
           onChange={(e) => onVisitTypeChange(e.target.value as VisitType)}
         />
       </div>
