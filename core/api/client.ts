@@ -103,4 +103,8 @@ export class ApiClient {
   }
 }
 
-export const apiClient = new ApiClient(API_BASE);
+// Auth API client - no /api prefix for auth endpoints
+export const authApiClient = new ApiClient(`${API_BASE}`);
+
+// Core REST API client - includes /api prefix for all endpoints
+export const apiClient = new ApiClient(`${API_BASE}/api`);
