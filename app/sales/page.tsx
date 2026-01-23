@@ -13,7 +13,14 @@ export default function SalesHome() {
 
   const { data: followups = [] as any[] } = useQuery({
     queryKey: ['sales-followups'],
-    queryFn: () => getSalesFollowupsAPI().then((res: any) => res.data || res),
+    queryFn: () => getSalesFollowupsAPI().then((res: any) => {
+      // Handle different response structures
+      if (res?.data && Array.isArray(res.data)) return res.data;
+      if (res?.followups && Array.isArray(res.followups)) return res.followups;
+      if (Array.isArray(res)) return res;
+      console.warn('Unexpected followups API response structure:', res);
+      return [];
+    }),
   });
 
   const filtered = followups.filter((f: any) => {
