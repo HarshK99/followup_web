@@ -15,7 +15,12 @@ export default function ManagerHome() {
     queryFn: () => getManagerFollowupsAPI('all').then((res: any) => res.data || res),
   });
 
-  const todayStr = new Date().toISOString().split('T')[0];
+  const [todayStr, setTodayStr] = useState('');
+
+  useEffect(() => {
+    setTodayStr(new Date().toISOString().split('T')[0]);
+  }, []);
+
   const today = followups.filter((f: any) => f.follow_up_date === todayStr);
   const overdue = followups.filter((f: any) => f.follow_up_date < todayStr && f.status === 'open');
   const upcoming = followups.filter((f: any) => f.follow_up_date > todayStr);

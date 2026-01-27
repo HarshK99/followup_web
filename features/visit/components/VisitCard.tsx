@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Text, Badge } from '../../../design-system/components';
 import { tokens } from '../../../design-system/tokens';
 import { VisitEvent } from '../../../core/types/visit';
@@ -51,7 +51,11 @@ const formatVisitDate = (dateString: string): string => {
 export const VisitCard: React.FC<VisitCardProps> = ({ visit }) => {
   const visitTypeLabel = getVisitTypeLabel(visit.visit_type);
   const visitTypeVariant = getVisitTypeVariant(visit.visit_type);
-  const formattedDate = formatVisitDate(visit.created_at);
+  const [formattedDate, setFormattedDate] = useState('');
+
+  useEffect(() => {
+    setFormattedDate(formatVisitDate(visit.created_at));
+  }, [visit.created_at]);
 
   return (
     <div style={{
