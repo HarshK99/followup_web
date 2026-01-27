@@ -1,53 +1,47 @@
 import { apiClient } from './client';
-import { VisitEventsResponse, VisitEventsParams } from '../types/visit';
+import { VisitEventsResponse, VisitEventsParams, VisitEvent, UpdateVisitPayload } from '../types/visit';
+import { normalizeVisitEventsResponse } from './normalizers/visitEvents';
 
-export const getSalesVisitEventsAPI = async (params: VisitEventsParams): Promise<VisitEventsResponse> => {
+/**
+ * Builds query parameters for visit events API calls
+ */
+function buildVisitEventsQueryParams(params: VisitEventsParams, additionalParams: Record<string, string> = {}): URLSearchParams {
   const queryParams = new URLSearchParams({
     timeframe: params.timeframe,
     limit: params.limit.toString(),
     offset: params.offset.toString(),
+    ...additionalParams
   });
 
-  const response = await apiClient.get<VisitEventsResponse>(`/visit-events?${queryParams}`);
+  return queryParams;
+}
 
-  // The apiClient returns ApiResponse<T> where T is VisitEventsResponse
-  // But the backend might return VisitEventsResponse directly
-  if (response?.data && response?.meta) {
-    return response as unknown as VisitEventsResponse;
-  }
-  if (response?.data && Array.isArray(response.data)) {
-    // If backend returns ApiResponse format, convert to expected format
-    return {
-      data: response.data,
-      meta: response.meta || { limit: params.limit, offset: params.offset, total: response.data.length, has_more: false }
-    };
-  }
+export const getVisitByIdAPI = async (visitId: string): Promise<VisitEvent> => {
+  const response = await apiClient.get<VisitEvent>(`/visit-events/${visitId}`);
+  return response.data;
+};
 
-  throw new Error('Unexpected API response structure');
+export const updateVisitByIdAPI = async (visitId: string, payload: UpdateVisitPayload): Promise<VisitEvent> => {
+  const response = await apiClient.patch<VisitEvent>(`/visit-events/${visitId}`, payload);
+  return response.data;
+};
+
+export const getSalesVisitEventsAPI = async (params: VisitEventsParams): Promise<VisitEventsResponse> => {
+  const queryParams = buildVisitEventsQueryParams(params);
+  const response = await apiClient.get<VisitEvent[]>(`/visit-events?${queryParams}`);
+
+  return normalizeVisitEventsResponse(response, {
+    limit: params.limit,
+    offset: params.offset
+  });
 };
 
 export const getManagerVisitEventsAPI = async (params: VisitEventsParams): Promise<VisitEventsResponse> => {
-  const queryParams = new URLSearchParams({
-    timeframe: params.timeframe,
-    limit: params.limit.toString(),
-    offset: params.offset.toString(),
-    scope: 'all',
+  const queryParams = buildVisitEventsQueryParams(params, { scope: 'all' });
+  const response = await apiClient.get<VisitEvent[]>(`/visit-events?${queryParams}`);
+
+  return normalizeVisitEventsResponse(response, {
+    limit: params.limit,
+    offset: params.offset
   });
-
-  const response = await apiClient.get<VisitEventsResponse>(`/visit-events?${queryParams}`);
-
-  // The apiClient returns ApiResponse<T> where T is VisitEventsResponse
-  // But the backend might return VisitEventsResponse directly
-  if (response?.data && response?.meta) {
-    return response as unknown as VisitEventsResponse;
-  }
-  if (response?.data && Array.isArray(response.data)) {
-    // If backend returns ApiResponse format, convert to expected format
-    return {
-      data: response.data,
-      meta: response.meta || { limit: params.limit, offset: params.offset, total: response.data.length, has_more: false }
-    };
-  }
-
-  throw new Error('Unexpected API response structure');
 };

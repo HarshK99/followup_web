@@ -11,7 +11,7 @@ import { TimeframeFilter } from '../../core/types/visit';
 import { VISIT_EVENTS_DEFAULT_LIMIT } from '../../core/constants/visit-events';
 
 export default function SalesHome() {
-  const [timeframe, setTimeframe] = useState<TimeframeFilter>('all');
+  const [timeframe, setTimeframe] = useState<TimeframeFilter>('today');
   const [offset, setOffset] = useState(0);
   const router = useRouter();
 
@@ -30,6 +30,10 @@ export default function SalesHome() {
   const handleTimeframeChange = (newTimeframe: TimeframeFilter) => {
     setTimeframe(newTimeframe);
     setOffset(0); // Reset pagination when changing timeframe
+  };
+
+  const handleVisitClick = (visitId: string) => {
+    router.push(`/sales/edit-visit/${visitId}`);
   };
 
   const handleLoadMore = () => {
@@ -61,7 +65,11 @@ export default function SalesHome() {
         <Button variant={timeframe === 'upcoming' ? 'primary' : 'secondary'} onClick={() => handleTimeframeChange('upcoming')}>Upcoming</Button>
       </div>
       <div style={{ display: 'flex', flexDirection: 'column' }}>
-        <VisitList visits={visitEvents} emptyMessage={getEmptyMessage(timeframe)} />
+        <VisitList
+          visits={visitEvents}
+          emptyMessage={getEmptyMessage(timeframe)}
+          onVisitClick={handleVisitClick}
+        />
         {meta?.has_more && (
           <div style={{ padding: tokens.spacing[4], textAlign: 'center' }}>
             <Button onClick={handleLoadMore} disabled={isLoading}>

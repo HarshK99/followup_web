@@ -7,11 +7,13 @@ import { VisitEvent } from '../../../core/types/visit';
 interface VisitListProps {
   visits: VisitEvent[];
   emptyMessage?: string;
+  onVisitClick?: (visitId: string) => void;
 }
 
 export const VisitList: React.FC<VisitListProps> = ({
   visits,
-  emptyMessage = "No visits found"
+  emptyMessage = "No visits found",
+  onVisitClick
 }) => {
   if (visits.length === 0) {
     return (
@@ -28,7 +30,10 @@ export const VisitList: React.FC<VisitListProps> = ({
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       {visits.map((visit, index) => (
         <React.Fragment key={visit.id}>
-          <VisitCard visit={visit} />
+          <VisitCard
+            visit={visit}
+            onClick={onVisitClick ? () => onVisitClick(visit.id) : undefined}
+          />
           {index < visits.length - 1 && <ListDivider spacing={1} />}
         </React.Fragment>
       ))}

@@ -5,6 +5,7 @@ import { VisitEvent } from '../../../core/types/visit';
 
 interface VisitCardProps {
   visit: VisitEvent;
+  onClick?: () => void;
 }
 
 const getVisitTypeLabel = (visitType: string): string => {
@@ -48,7 +49,29 @@ const formatVisitDate = (dateString: string): string => {
   }
 };
 
-export const VisitCard: React.FC<VisitCardProps> = ({ visit }) => {
+const getOutcomeSummary = (visit: VisitEvent): string => {
+  if (visit.visit_type === 'follow_up') {
+    const response = visit.response === 'interested' ? 'Interested' : visit.response === 'not_interested' ? 'Not Interested' : '';
+    const timing = visit.follow_up_days ? `Follow up in ${visit.follow_up_days} days` :
+                  visit.follow_up_date ? `Follow up ${new Date(visit.follow_up_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}` : '';
+    const parts = [response, timing].filter(Boolean);
+    return parts.length > 0 ? parts.join(' • ') : 'No outcome recorded';
+  } else if (visit.visit_type === 'order') {
+    return 'Order placed';
+  }
+  return '';
+};
+
+const getNoteText = (visit: VisitEvent): string => {
+  if (visit.visit_type === 'follow_up' && visit.follow_up_note) {
+    return visit.follow_up_note;
+  } else if (visit.visit_type === 'order' && visit.order_note) {
+    return visit.order_note;
+  }
+  return 'No notes added';
+};
+
+export const VisitCard: React.FC<VisitCardProps> = ({ visit, onClick }) => {
   const visitTypeLabel = getVisitTypeLabel(visit.visit_type);
   const visitTypeVariant = getVisitTypeVariant(visit.visit_type);
   const [formattedDate, setFormattedDate] = useState('');
@@ -57,13 +80,20 @@ export const VisitCard: React.FC<VisitCardProps> = ({ visit }) => {
     setFormattedDate(formatVisitDate(visit.created_at));
   }, [visit.created_at]);
 
+  const outcomeSummary = getOutcomeSummary(visit);
+  const noteText = getNoteText(visit);
+
   return (
-    <div style={{
-      padding: `${tokens.spacing[3]} 0`,
-      display: 'flex',
-      flexDirection: 'column',
-      gap: tokens.spacing[1]
-    }}>
+    <div
+      style={{
+        padding: `${tokens.spacing[3]} 0`,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: tokens.spacing[1],
+        cursor: onClick ? 'pointer' : 'default'
+      }}
+      onClick={onClick}
+    >
       {/* Line 1: Vendor name + visit type badge */}
       <div style={{
         display: 'flex',
@@ -78,16 +108,16 @@ export const VisitCard: React.FC<VisitCardProps> = ({ visit }) => {
         </Badge>
       </div>
 
-      {/* Line 2: Outcome summary + visit date */}
+      {/* Line 2: Outcome summary + note + visit date */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between'
       }}>
-        <Text size="sm" color="secondary" style={{ flex: 1 }}>
-          {visit.note || 'No additional notes'}
+        <Text size="sm" color="secondary" style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {outcomeSummary || noteText}
         </Text>
-        <Text size="sm" color="secondary" style={{ marginLeft: tokens.spacing[2] }}>
+        <Text size="sm" color="secondary" style={{ marginLeft: tokens.spacing[2], flexShrink: 0 }}>
           {formattedDate}
         </Text>
       </div>

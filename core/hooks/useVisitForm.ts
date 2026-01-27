@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getVendorsAPI } from '../api/vendors';
@@ -48,7 +48,7 @@ const initialFormData: VisitFormData = {
   visit_type: 'follow_up',
 };
 
-export function useVisitForm(): VisitFormState & VisitFormActions {
+export function useVisitForm(visitId?: string): VisitFormState & VisitFormActions {
   const router = useRouter();
   const queryClient = useQueryClient();
 
