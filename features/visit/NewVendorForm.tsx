@@ -12,7 +12,7 @@ export function NewVendorForm({ vendor, onVendorUpdate }: NewVendorFormProps) {
   return (
     <div style={{
       padding: tokens.spacing[4],
-      backgroundColor: tokens.colors.light,
+      backgroundColor: tokens.colors.surfaceSecondary, // Changed from light to surfaceSecondary
       borderRadius: tokens.borderRadius.md
     }}>
       <Text as="h3" size="sm" weight="bold" style={{ marginBottom: tokens.spacing[3] }}>

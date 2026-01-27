@@ -11,13 +11,13 @@ export const ManagerLayout: React.FC<ManagerLayoutProps> = ({ children, sidebar,
   const containerStyle: React.CSSProperties = {
     display: 'flex',
     minHeight: '100vh',
-    backgroundColor: tokens.colors.light,
+    backgroundColor: tokens.colors.background, // Changed from light to background
   };
 
   const sidebarStyle: React.CSSProperties = {
     width: '250px',
-    backgroundColor: tokens.colors.white,
-    borderRight: `1px solid ${tokens.colors.secondary}`,
+    backgroundColor: tokens.colors.surface, // Changed from white to surface
+    borderRight: `1px solid ${tokens.colors.border}`, // Changed from secondary to border
     padding: tokens.spacing[4],
     boxShadow: tokens.shadows.md,
   };
@@ -29,8 +29,8 @@ export const ManagerLayout: React.FC<ManagerLayoutProps> = ({ children, sidebar,
   };
 
   const headerStyle: React.CSSProperties = {
-    backgroundColor: tokens.colors.white,
-    borderBottom: `1px solid ${tokens.colors.secondary}`,
+    backgroundColor: tokens.colors.surface, // Changed from white to surface
+    borderBottom: `1px solid ${tokens.colors.border}`, // Changed from secondary to border
     padding: tokens.spacing[4],
     boxShadow: tokens.shadows.sm,
   };
@@ -38,7 +38,7 @@ export const ManagerLayout: React.FC<ManagerLayoutProps> = ({ children, sidebar,
   const contentStyle: React.CSSProperties = {
     flex: 1,
     padding: tokens.spacing[4],
-    backgroundColor: tokens.colors.white,
+    backgroundColor: tokens.colors.surface, // Changed from white to surface
     margin: tokens.spacing[4],
     borderRadius: tokens.borderRadius.md,
     boxShadow: tokens.shadows.md,

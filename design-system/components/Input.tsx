@@ -8,6 +8,7 @@ interface InputProps {
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   disabled?: boolean;
   error?: boolean;
+  prefix?: string; // New prefix prop
 }
 
 export const Input: React.FC<InputProps> = ({
@@ -17,6 +18,7 @@ export const Input: React.FC<InputProps> = ({
   onChange,
   disabled = false,
   error = false,
+  prefix,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
 

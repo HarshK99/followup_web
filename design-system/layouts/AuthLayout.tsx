@@ -11,7 +11,7 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
     justifyContent: 'center',
     alignItems: 'center',
     minHeight: '100vh',
-    backgroundColor: tokens.colors.light,
+    backgroundColor: tokens.colors.background, // Changed from light to background
     padding: tokens.spacing[4],
   };
 
