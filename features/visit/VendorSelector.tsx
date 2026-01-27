@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { SearchSelect, Text } from '../../design-system/components';
+import { SearchSelect } from '../../design-system/components';
 import { tokens } from '../../design-system/tokens';
 import { NewVendorForm } from './NewVendorForm';
 import type { Vendor } from '../../core/hooks/useVisitForm';
@@ -78,10 +78,6 @@ export function VendorSelector({
 
   return (
     <div style={{ marginBottom: tokens.spacing[6] }}>
-      <Text as="h2" size="md" weight="bold" style={{ marginBottom: tokens.spacing[3] }}>
-        Select or Create Vendor
-      </Text>
-
       <div style={{ marginBottom: tokens.spacing[4] }}>
         <SearchSelect
           value={displayValue}

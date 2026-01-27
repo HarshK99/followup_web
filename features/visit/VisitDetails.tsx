@@ -1,5 +1,5 @@
 import React from 'react';
-import { SegmentedControl, Text } from '../../design-system/components';
+import { SegmentedControl } from '../../design-system/components';
 import { tokens } from '../../design-system/tokens';
 import type { VisitType } from '../../core/hooks/useVisitForm';
 
@@ -16,10 +16,6 @@ const visitTypeOptions = [
 export function VisitDetails({ visitType, onVisitTypeChange }: VisitDetailsProps) {
   return (
     <div style={{ marginBottom: tokens.spacing[6] }}>
-      <Text as="h2" size="md" weight="bold" style={{ marginBottom: tokens.spacing[3] }}>
-        Visit Details
-      </Text>
-
       <div style={{ marginBottom: tokens.spacing[4] }}>
         <SegmentedControl
           options={visitTypeOptions}
