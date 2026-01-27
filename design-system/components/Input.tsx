@@ -48,15 +48,35 @@ export const Input: React.FC<InputProps> = ({
   };
 
   return (
-    <input
-      type={type}
-      placeholder={placeholder}
-      value={value}
-      onChange={onChange}
-      disabled={disabled}
-      onFocus={() => setIsFocused(true)}
-      onBlur={() => setIsFocused(false)}
-      style={style}
-    />
+    <div style={{ position: 'relative', width: '100%' }}>
+      {prefix && (
+        <div style={{
+          position: 'absolute',
+          left: tokens.spacing[4], // Position from left edge
+          top: tokens.spacing[3], // Align with input text (same as input top padding)
+          fontFamily: tokens.typography.fontFamily,
+          fontSize: tokens.typography.fontSize.md,
+          color: tokens.colors.textSecondary,
+          pointerEvents: 'none',
+          zIndex: 1,
+          lineHeight: tokens.typography.lineHeight.normal,
+        }}>
+          {prefix}
+        </div>
+      )}
+      <input
+        type={type}
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+        disabled={disabled}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        style={{
+          ...style,
+          paddingLeft: prefix ? '60px' : style.paddingLeft, // Add left padding for prefix (+91 takes ~28px + spacing)
+        }}
+      />
+    </div>
   );
 };

@@ -13,9 +13,23 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const router = useRouter();
 
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, ''); // Only allow digits
+    setPhone(value);
+  };
+
+  const getFullPhoneNumber = () => {
+    const cleanPhone = phone.replace(/\D/g, '');
+    if (cleanPhone.startsWith('91')) {
+      return `+${cleanPhone}`;
+    }
+    return `+91${cleanPhone}`;
+  };
+
   const handleLogin = async () => {
-    console.log('Login button clicked with phone:', phone, 'password length:', password.length);
-    const result = await login(phone, password);
+    const fullPhoneNumber = getFullPhoneNumber();
+    console.log('Login button clicked with phone:', fullPhoneNumber, 'password length:', password.length);
+    const result = await login(fullPhoneNumber, password);
     console.log('Login result:', result);
     if (result) {
       setSession({ token: result.token, user: result.user });
@@ -35,7 +49,8 @@ export default function LoginPage() {
             type="tel"
             placeholder="Phone Number"
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            onChange={handlePhoneChange}
+            prefix="+91"
           />
         </div>
         <div style={{ marginBottom: tokens.spacing[4] }}>
