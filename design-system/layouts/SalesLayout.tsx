@@ -11,7 +11,7 @@ export const SalesLayout: React.FC<SalesLayoutProps> = ({ children, actions }) =
     display: 'flex',
     flexDirection: 'column',
     minHeight: '100vh',
-    backgroundColor: tokens.colors.white,
+    backgroundColor: tokens.colors.surface, // Changed from white to surface
   };
 
   const contentStyle: React.CSSProperties = {
@@ -25,8 +25,8 @@ export const SalesLayout: React.FC<SalesLayoutProps> = ({ children, actions }) =
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: tokens.colors.white,
-    borderTop: `1px solid ${tokens.colors.light}`,
+    backgroundColor: tokens.colors.surface, // Changed from white to surface
+    borderTop: `1px solid ${tokens.colors.border}`, // Changed from light to border
     padding: tokens.spacing[3],
     display: 'flex',
     justifyContent: 'space-around',

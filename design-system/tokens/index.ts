@@ -1,5 +1,6 @@
 export const tokens = {
   colors: {
+    // Theme-aware colors using CSS custom properties
     primary: '#007bff',
     secondary: '#6c757d',
     success: '#28a745',
@@ -7,10 +8,19 @@ export const tokens = {
     warning: '#ffc107',
     info: '#17a2b8',
     light: '#f8f9fa',
-    dark: '#343a40',
+    dark: 'var(--text-primary)', // Changed from '#343a40' to use theme-aware color
     white: '#ffffff',
     black: '#000000',
-    subtle: '#e9ecef', // Added for input bottom border default state
+    subtle: 'var(--border)', // Changed to use theme-aware border color
+    // New theme-aware text colors
+    textPrimary: 'var(--text-primary)',
+    textSecondary: 'var(--text-secondary)',
+    textMuted: 'var(--text-muted)',
+    background: 'var(--background)',
+    surface: 'var(--surface)',
+    surfaceSecondary: 'var(--surface-secondary)',
+    border: 'var(--border)',
+    borderLight: 'var(--border-light)',
   },
   typography: {
     fontFamily: 'Arial, sans-serif',

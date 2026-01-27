@@ -22,9 +22,9 @@ export const SegmentedControl: React.FC<SegmentedControlProps> = ({
   const containerStyle: React.CSSProperties = {
     display: 'flex',
     borderRadius: tokens.borderRadius.md,
-    border: `${tokens.borderWidth.thin} solid ${tokens.colors.subtle}`,
+    border: `${tokens.borderWidth.thin} solid ${tokens.colors.border}`, // Changed from subtle to border
     overflow: 'hidden',
-    backgroundColor: tokens.colors.light,
+    backgroundColor: tokens.colors.surfaceSecondary, // Changed from light to surfaceSecondary
     opacity: disabled ? 0.6 : 1,
   };
 
@@ -37,13 +37,13 @@ export const SegmentedControl: React.FC<SegmentedControlProps> = ({
       padding: `${tokens.spacing[3]} ${tokens.spacing[4]}`,
       border: 'none',
       backgroundColor: isActive ? tokens.colors.primary : 'transparent',
-      color: isActive ? tokens.colors.white : tokens.colors.dark,
+      color: isActive ? tokens.colors.white : tokens.colors.textPrimary, // Changed from dark to textPrimary
       fontFamily: tokens.typography.fontFamily,
       fontSize: tokens.typography.fontSize.md,
       fontWeight: tokens.typography.fontWeight.medium,
       cursor: disabled ? 'not-allowed' : 'pointer',
       transition: 'background-color 0.2s, color 0.2s',
-      borderRight: !isLast ? `${tokens.borderWidth.thin} solid ${tokens.colors.subtle}` : 'none',
+      borderRight: !isLast ? `${tokens.borderWidth.thin} solid ${tokens.colors.border}` : 'none', // Changed from subtle to border
       outline: 'none',
       minHeight: '44px', // Ensure good touch targets for mobile
     };

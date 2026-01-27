@@ -14,7 +14,7 @@ export const Text: React.FC<TextProps> = ({
   children,
   size = 'md',
   weight = 'normal',
-  color = 'dark',
+  color = 'textPrimary', // Changed from 'dark' to 'textPrimary' for better dark mode support
   as: Component = 'p',
   style = {},
 }) => {

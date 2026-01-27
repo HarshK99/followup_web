@@ -13,7 +13,7 @@ export const Card: React.FC<CardProps> = ({
   shadow = 'md',
 }) => {
   const style: React.CSSProperties = {
-    backgroundColor: tokens.colors.white,
+    backgroundColor: tokens.colors.surface, // Changed from white to surface
     borderRadius: tokens.borderRadius.md,
     boxShadow: tokens.shadows[shadow],
     padding: tokens.spacing[padding as keyof typeof tokens.spacing],
