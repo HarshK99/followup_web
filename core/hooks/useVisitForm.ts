@@ -131,14 +131,28 @@ export function useVisitForm(visitId?: string): VisitFormState & VisitFormAction
         console.log('❌ Validation failed: Please select a response for the follow-up');
         return 'Please select a response for the follow-up';
       }
+
       if (formData.potential_score === undefined || formData.potential_score < 0 || formData.potential_score > 10) {
         console.log('❌ Validation failed: Please provide a valid potential score (0-10)');
         return 'Please provide a valid potential score (0-10)';
       }
-      if (!formData.follow_up_days && !formData.follow_up_date) {
-        console.log('❌ Validation failed: Please choose when to follow up');
-        return 'Please choose when to follow up';
+
+      // Timing rules only apply when user is interested
+      if (formData.response === 'interested') {
+        const hasDays = formData.follow_up_days !== undefined;
+        const hasDate = !!formData.follow_up_date;
+
+        if (hasDays && hasDate) {
+          console.log('❌ Validation failed: Provide only one timing option (days OR date)');
+          return 'Provide only one timing option: follow_up_days OR follow_up_date';
+        }
+
+        if (!hasDays && !hasDate) {
+          console.log('❌ Validation failed: Please choose when to follow up');
+          return 'Please choose when to follow up';
+        }
       }
+      // If response === 'not_interested', timing is optional and not required
     } else if (formData.visit_type === 'order') {
       console.log('📋 Validating order fields: order type requires no additional validation');
       // Order visits require no additional validation - status is handled server-side
@@ -173,11 +187,14 @@ export function useVisitForm(visitId?: string): VisitFormState & VisitFormAction
         note: formData.follow_up_note || undefined,
       };
 
-      // Send only one timing field, not both
-      if (formData.follow_up_days !== undefined) {
-        followUpData.follow_up_days = formData.follow_up_days;
-      } else if (formData.follow_up_date) {
-        followUpData.follow_up_date = formData.follow_up_date;
+      // Timing fields are only included when user is interested
+      if (formData.response === 'interested') {
+        // Send only one timing field, not both
+        if (formData.follow_up_days !== undefined) {
+          followUpData.follow_up_days = formData.follow_up_days;
+        } else if (formData.follow_up_date) {
+          followUpData.follow_up_date = formData.follow_up_date;
+        }
       }
 
       payload.follow_up = followUpData;

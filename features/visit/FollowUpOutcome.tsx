@@ -67,7 +67,14 @@ export function FollowUpOutcome({
           value={response || ''}
           onChange={(value) => {
             console.log('📝 Response changed:', value);
-            onResponseChange(value as 'interested' | 'not_interested');
+                const typed = value as 'interested' | 'not_interested';
+                onResponseChange(typed);
+
+                // If user marks 'not_interested', clear any timing inputs
+                if (typed === 'not_interested') {
+                  onFollowUpDaysChange(undefined);
+                  onFollowUpDateChange(undefined);
+                }
           }}
         />
       </div>
@@ -85,7 +92,8 @@ export function FollowUpOutcome({
         />
       </div>
 
-      {timingMode === 'days' && (
+      {/* Timing controls are only relevant when user is interested */}
+      {response === 'interested' && timingMode === 'days' && (
         <>
           <div style={{ marginBottom: tokens.spacing[4] }}>
             <Input
@@ -121,7 +129,7 @@ export function FollowUpOutcome({
         </>
       )}
 
-      {timingMode === 'date' && (
+      {response === 'interested' && timingMode === 'date' && (
         <>
           <div style={{ marginBottom: tokens.spacing[4] }}>
             <DatePicker
