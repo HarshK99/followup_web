@@ -38,12 +38,12 @@ export default function EditVisit() {
   useEffect(() => {
     if (visit) {
       setNote(visit.note || '');
-      setResponse(visit.response);
-      setPotentialScore(visit.potential_score);
-      setFollowUpDays(visit.follow_up_days);
-      setFollowUpDate(visit.follow_up_date);
-      setFollowUpNote(visit.follow_up_note || '');
-      setOrderNote(visit.order_note || '');
+      setResponse(visit.follow_up?.response);
+      setPotentialScore(visit.follow_up?.potential_score);
+      setFollowUpDays(visit.follow_up?.follow_up_days);
+      setFollowUpDate(visit.follow_up?.follow_up_date);
+      setFollowUpNote(visit.follow_up?.note || '');
+      setOrderNote(visit.order?.note || '');
     }
   }, [visit]);
 
@@ -79,23 +79,23 @@ export default function EditVisit() {
       const followUpPayload: NonNullable<UpdateVisitPayload['follow_up']> = {};
       let hasFollowUpChanges = false;
 
-      if (response !== visit.response) {
+      if (response !== visit.follow_up?.response) {
         followUpPayload.response = response;
         hasFollowUpChanges = true;
       }
-      if (potentialScore !== visit.potential_score) {
+      if (potentialScore !== visit.follow_up?.potential_score) {
         followUpPayload.potential_score = potentialScore;
         hasFollowUpChanges = true;
       }
-      if (followUpDays !== visit.follow_up_days) {
+      if (followUpDays !== visit.follow_up?.follow_up_days) {
         followUpPayload.follow_up_days = followUpDays;
         hasFollowUpChanges = true;
       }
-      if (followUpDate !== visit.follow_up_date) {
+      if (followUpDate !== visit.follow_up?.follow_up_date) {
         followUpPayload.follow_up_date = followUpDate;
         hasFollowUpChanges = true;
       }
-      if (followUpNote !== (visit.follow_up_note || '')) {
+      if (followUpNote !== (visit.follow_up?.note || '')) {
         followUpPayload.note = followUpNote;
         hasFollowUpChanges = true;
       }
@@ -104,7 +104,7 @@ export default function EditVisit() {
         payload.follow_up = followUpPayload;
       }
     } else if (visit.visit_type === 'order') {
-      if (orderNote !== (visit.order_note || '')) {
+      if (orderNote !== (visit.order?.note || '')) {
         payload.order = { note: orderNote };
       }
     }

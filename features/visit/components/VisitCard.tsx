@@ -51,9 +51,9 @@ const formatVisitDate = (dateString: string): string => {
 
 const getOutcomeSummary = (visit: VisitEvent): string => {
   if (visit.visit_type === 'follow_up') {
-    const response = visit.response === 'interested' ? 'Interested' : visit.response === 'not_interested' ? 'Not Interested' : '';
-    const timing = visit.follow_up_days ? `Follow up in ${visit.follow_up_days} days` :
-                  visit.follow_up_date ? `Follow up ${new Date(visit.follow_up_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}` : '';
+    const response = visit.follow_up?.response === 'interested' ? 'Interested' : visit.follow_up?.response === 'not_interested' ? 'Not Interested' : '';
+    const timing = visit.follow_up?.follow_up_days ? `Follow up in ${visit.follow_up.follow_up_days} days` :
+                  visit.follow_up?.follow_up_date ? `Follow up ${new Date(visit.follow_up.follow_up_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}` : '';
     const parts = [response, timing].filter(Boolean);
     return parts.length > 0 ? parts.join(' • ') : 'No outcome recorded';
   } else if (visit.visit_type === 'order') {
@@ -63,10 +63,10 @@ const getOutcomeSummary = (visit: VisitEvent): string => {
 };
 
 const getNoteText = (visit: VisitEvent): string => {
-  if (visit.visit_type === 'follow_up' && visit.follow_up_note) {
-    return visit.follow_up_note;
-  } else if (visit.visit_type === 'order' && visit.order_note) {
-    return visit.order_note;
+  if (visit.visit_type === 'follow_up' && visit.follow_up?.note) {
+    return visit.follow_up.note;
+  } else if (visit.visit_type === 'order' && visit.order?.note) {
+    return visit.order.note;
   }
   return 'No notes added';
 };

@@ -18,14 +18,8 @@ export default function FollowupsList() {
 
   const { data: followups = [] as any[] } = useQuery({
     queryKey: ['manager-followups'],
-    queryFn: () => getManagerFollowupsAPI('all').then((res: any) => {
-      // Handle different response structures
-      if (res?.data && Array.isArray(res.data)) return res.data;
-      if (res?.followups && Array.isArray(res.followups)) return res.followups;
-      if (Array.isArray(res)) return res;
-      console.warn('Unexpected manager followups API response structure:', res);
-      return [];
-    }),
+    // Manager followups is a collection endpoint — extract `.data` explicitly
+    queryFn: () => getManagerFollowupsAPI('all').then((res: any) => res.data),
   });
 
   const outcomeMutation = useMutation({

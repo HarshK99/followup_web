@@ -56,17 +56,10 @@ export function useVisitForm(visitId?: string): VisitFormState & VisitFormAction
   const [selectedVendorOption, setSelectedVendorOption] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch vendors
+  // Fetch vendors (collection endpoint) — explicitly extract `.data`
   const { data: vendors = [] } = useQuery({
     queryKey: ['vendors'],
-    queryFn: () => getVendorsAPI().then((res: any) => {
-      // Handle different response structures
-      if (res?.vendors && Array.isArray(res.vendors)) return res.vendors;
-      if (res?.data && Array.isArray(res.data)) return res.data;
-      if (Array.isArray(res)) return res;
-      console.warn('Unexpected vendors API response structure:', res);
-      return [];
-    }),
+    queryFn: () => getVendorsAPI().then((res: any) => res.data),
   });
 
   // Submit mutation

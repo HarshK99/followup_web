@@ -7,14 +7,19 @@ export interface VisitEvent {
   visit_type: 'follow_up' | 'order';
   note?: string;
   created_at: string;
-  // Follow-up specific fields
-  response?: 'interested' | 'not_interested';
-  potential_score?: number;
-  follow_up_days?: number;
-  follow_up_date?: string;
-  follow_up_note?: string;
-  // Order specific fields
-  order_note?: string;
+  follow_up?: {
+    id: string;
+    response?: 'interested' | 'not_interested';
+    potential_score?: number;
+    follow_up_days?: number;
+    follow_up_date?: string;
+    note?: string;
+  };
+  order?: {
+    id: string;
+    note?: string;
+    status?: string;
+  };
 }
 
 export interface VisitEventsResponse {

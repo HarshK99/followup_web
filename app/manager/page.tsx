@@ -12,7 +12,8 @@ export default function ManagerHome() {
 
   const { data: followups = [] as any[] } = useQuery({
     queryKey: ['manager-followups'],
-    queryFn: () => getManagerFollowupsAPI('all').then((res: any) => res.data || res),
+    // getManagerFollowupsAPI is a collection endpoint — extract `.data`
+    queryFn: () => getManagerFollowupsAPI('all').then((res: any) => res.data),
   });
 
   const [todayStr, setTodayStr] = useState('');
