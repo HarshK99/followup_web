@@ -4,13 +4,14 @@ import React, { useState } from 'react';
 import { tokens } from '../tokens';
 
 interface InputProps {
-  type?: 'text' | 'email' | 'password' | 'tel';
+  type?: 'text' | 'email' | 'password' | 'tel' | 'number';
   placeholder?: string;
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   disabled?: boolean;
   error?: boolean;
   prefix?: string; // New prefix prop
+  inputMode?: 'text' | 'numeric' | 'decimal' | 'tel' | 'search' | 'email' | 'url'; // New inputMode prop
 }
 
 export const Input: React.FC<InputProps> = ({
@@ -21,6 +22,7 @@ export const Input: React.FC<InputProps> = ({
   disabled = false,
   error = false,
   prefix,
+  inputMode,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
 
@@ -74,6 +76,7 @@ export const Input: React.FC<InputProps> = ({
         disabled={disabled}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
+        inputMode={inputMode}
         style={{
           ...style,
           paddingLeft: prefix ? '60px' : style.paddingLeft, // Add left padding for prefix (+91 takes ~28px + spacing)

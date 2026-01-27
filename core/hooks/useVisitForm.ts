@@ -24,7 +24,6 @@ export interface VisitFormData {
   follow_up_days?: number;
   follow_up_note?: string;
   // Order fields
-  order_status?: 'placed' | 'promised';
   order_note?: string;
 }
 
@@ -141,14 +140,8 @@ export function useVisitForm(): VisitFormState & VisitFormActions {
         return 'Please provide a valid potential score (0-10)';
       }
     } else if (formData.visit_type === 'order') {
-      console.log('📋 Validating order fields:', {
-        order_status: formData.order_status
-      });
-
-      if (!formData.order_status) {
-        console.log('❌ Validation failed: Please select an order status');
-        return 'Please select an order status';
-      }
+      console.log('📋 Validating order fields: order type requires no additional validation');
+      // Order visits require no additional validation - status is handled server-side
     }
 
     console.log('✅ Validation passed');
@@ -182,7 +175,6 @@ export function useVisitForm(): VisitFormState & VisitFormActions {
       };
     } else if (formData.visit_type === 'order') {
       payload.order = {
-        status: formData.order_status,
         note: formData.order_note || undefined,
       };
     }

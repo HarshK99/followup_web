@@ -83,9 +83,7 @@ export default function AddVisit() {
 
           {formData.visit_type === 'order' && (
             <OrderOutcome
-              status={formData.order_status}
               note={formData.order_note}
-              onStatusChange={(value: 'placed' | 'promised') => updateForm({ order_status: value })}
               onNoteChange={(value: string) => updateForm({ order_note: value })}
             />
           )}
