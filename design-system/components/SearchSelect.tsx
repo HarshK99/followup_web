@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Input, Card, ListItem, Text, Button } from '../components';
 import { tokens } from '../tokens';

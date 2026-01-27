@@ -1,5 +1,6 @@
 import React from 'react';
 import { tokens } from '../tokens';
+import { KeyboardAwareContainer } from '../components';
 
 interface SalesLayoutProps {
   children: React.ReactNode;
@@ -17,7 +18,7 @@ export const SalesLayout: React.FC<SalesLayoutProps> = ({ children, actions }) =
   const contentStyle: React.CSSProperties = {
     flex: 1,
     padding: tokens.spacing[4],
-    paddingBottom: actions ? '80px' : tokens.spacing[4], // space for bottom actions
+    // Remove bottom padding as KeyboardAwareContainer will handle it
   };
 
   const actionsStyle: React.CSSProperties = {
@@ -31,11 +32,15 @@ export const SalesLayout: React.FC<SalesLayoutProps> = ({ children, actions }) =
     display: 'flex',
     justifyContent: 'space-around',
     boxShadow: tokens.shadows.lg,
+    // Ensure actions stay above keyboard padding
+    zIndex: 10,
   };
 
   return (
     <div style={containerStyle}>
-      <div style={contentStyle}>{children}</div>
+      <KeyboardAwareContainer style={contentStyle}>
+        {children}
+      </KeyboardAwareContainer>
       {actions && <div style={actionsStyle}>{actions}</div>}
     </div>
   );

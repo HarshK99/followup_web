@@ -13,3 +13,4 @@ export { DatePicker } from './DatePicker';
 export { BottomActionBar } from './BottomActionBar';
 export { Table } from './Table';
 export { Modal } from './Modal';
+export { KeyboardAwareContainer } from './KeyboardAwareContainer';

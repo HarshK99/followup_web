@@ -54,6 +54,7 @@ export function FollowUpOutcome({
 
       <div style={{ marginBottom: tokens.spacing[4] }}>
         <Input
+          type="number"
           placeholder="Potential score (0-10)"
           value={potentialScore?.toString() || ''}
           onChange={(e) => {
@@ -65,6 +66,7 @@ export function FollowUpOutcome({
 
       <div style={{ marginBottom: tokens.spacing[4] }}>
         <Input
+          type="number"
           placeholder="Follow-up days (optional)"
           value={followUpDays?.toString() || ''}
           onChange={(e) => onFollowUpDaysChange(parseInt(e.target.value) || undefined)}
