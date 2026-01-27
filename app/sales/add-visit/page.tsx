@@ -70,6 +70,7 @@ export default function AddVisit() {
               response={formData.response}
               potentialScore={formData.potential_score}
               followUpDays={formData.follow_up_days}
+              followUpDate={formData.follow_up_date}
               followUpNote={formData.follow_up_note}
               onResponseChange={(value) => {
                 console.log('📝 Page: onResponseChange called with:', value);
@@ -77,6 +78,7 @@ export default function AddVisit() {
               }}
               onPotentialScoreChange={(value) => updateForm({ potential_score: value })}
               onFollowUpDaysChange={(value) => updateForm({ follow_up_days: value })}
+              onFollowUpDateChange={(value) => updateForm({ follow_up_date: value })}
               onFollowUpNoteChange={(value) => updateForm({ follow_up_note: value })}
             />
           )}

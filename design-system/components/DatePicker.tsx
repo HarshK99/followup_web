@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { tokens } from '../tokens';
 
 interface DatePickerProps {
@@ -8,15 +8,39 @@ interface DatePickerProps {
   onChange: (value: string) => void;
   error?: boolean;
   disabled?: boolean;
+  autoOpen?: boolean;
 }
 
-export const DatePicker: React.FC<DatePickerProps> = ({
+export interface DatePickerRef {
+  openPicker: () => void;
+}
+
+export const DatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   value,
   onChange,
   error = false,
-  disabled = false
-}) => {
+  disabled = false,
+  autoOpen = false
+}, ref) => {
   const [isFocused, setIsFocused] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useImperativeHandle(ref, () => ({
+    openPicker: () => {
+      if (inputRef.current && !disabled) {
+        inputRef.current.showPicker?.();
+      }
+    }
+  }));
+
+  useEffect(() => {
+    if (autoOpen && inputRef.current && !disabled) {
+      // Small delay to ensure the element is rendered
+      setTimeout(() => {
+        inputRef.current?.showPicker?.();
+      }, 10);
+    }
+  }, [autoOpen, disabled]);
 
   const getBorderColor = () => {
     if (error) return tokens.colors.danger;
@@ -44,6 +68,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
 
   return (
     <input
+      ref={inputRef}
       type="date"
       value={value}
       onChange={(e) => onChange(e.target.value)}
@@ -53,4 +78,4 @@ export const DatePicker: React.FC<DatePickerProps> = ({
       style={style}
     />
   );
-};
+});

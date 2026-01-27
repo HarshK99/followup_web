@@ -22,6 +22,7 @@ export interface VisitFormData {
   response?: 'interested' | 'not_interested';
   potential_score?: number;
   follow_up_days?: number;
+  follow_up_date?: string;
   follow_up_note?: string;
   // Order fields
   order_note?: string;
@@ -128,7 +129,9 @@ export function useVisitForm(): VisitFormState & VisitFormActions {
     if (formData.visit_type === 'follow_up') {
       console.log('📋 Validating follow-up fields:', {
         response: formData.response,
-        potential_score: formData.potential_score
+        potential_score: formData.potential_score,
+        follow_up_days: formData.follow_up_days,
+        follow_up_date: formData.follow_up_date
       });
 
       if (!formData.response) {
@@ -138,6 +141,10 @@ export function useVisitForm(): VisitFormState & VisitFormActions {
       if (formData.potential_score === undefined || formData.potential_score < 0 || formData.potential_score > 10) {
         console.log('❌ Validation failed: Please provide a valid potential score (0-10)');
         return 'Please provide a valid potential score (0-10)';
+      }
+      if (!formData.follow_up_days && !formData.follow_up_date) {
+        console.log('❌ Validation failed: Please choose when to follow up');
+        return 'Please choose when to follow up';
       }
     } else if (formData.visit_type === 'order') {
       console.log('📋 Validating order fields: order type requires no additional validation');
@@ -167,12 +174,20 @@ export function useVisitForm(): VisitFormState & VisitFormActions {
     };
 
     if (formData.visit_type === 'follow_up') {
-      payload.follow_up = {
+      const followUpData: any = {
         response: formData.response,
         potential_score: formData.potential_score,
-        follow_up_days: formData.follow_up_days,
         note: formData.follow_up_note || undefined,
       };
+
+      // Send only one timing field, not both
+      if (formData.follow_up_days !== undefined) {
+        followUpData.follow_up_days = formData.follow_up_days;
+      } else if (formData.follow_up_date) {
+        followUpData.follow_up_date = formData.follow_up_date;
+      }
+
+      payload.follow_up = followUpData;
     } else if (formData.visit_type === 'order') {
       payload.order = {
         note: formData.order_note || undefined,
