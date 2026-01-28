@@ -19,7 +19,7 @@ export default function FollowupsList() {
   const { data: followups = [] as any[] } = useQuery({
     queryKey: ['manager-followups'],
     // Manager followups is a collection endpoint — extract `.data` explicitly
-    queryFn: () => getManagerFollowupsAPI('today').then((res: any) => res.data),
+    queryFn: () => getManagerFollowupsAPI('today').then((res: any) => res.followUps),
   });
 
   const outcomeMutation = useMutation({
@@ -63,12 +63,12 @@ export default function FollowupsList() {
     }
   };
 
-  const headers = ['Vendor', 'Salesperson', 'Reason', 'Date', 'Status', 'Actions'];
+  const headers = ['Vendor', 'Creator', 'Note', 'Date', 'Status', 'Actions'];
 
   const rows = followups.map((f: any) => [
-    f.vendor_name,
-    f.salesperson_name,
-    f.reason,
+    f.vendor.name,
+    f.creator.name,
+    f.note || 'N/A',
     f.follow_up_date,
     f.status,
     <div key={f.id}>

@@ -14,7 +14,7 @@ export default function ManagerHome() {
     queryKey: ['manager-followups'],
     // getManagerFollowupsAPI is a collection endpoint — extract `.data`
     // Default landing view: filter=today (do not pass 'all')
-    queryFn: () => getManagerFollowupsAPI().then((res: any) => res.data),
+    queryFn: () => getManagerFollowupsAPI().then((res: any) => res.followUps),
   });
 
   const [todayStr, setTodayStr] = useState('');
@@ -36,15 +36,15 @@ export default function ManagerHome() {
         <>
           <Card>
             <Text as="h2" size="lg">Today</Text>
-            {today.map((f: any) => <ListItem key={f.id}><Text>{f.vendor_name} - {f.salesperson_name}</Text></ListItem>)}
+            {today.map((f: any) => <ListItem key={f.id}><Text>{f.vendor.name} - {f.creator.name} ({f.status})</Text></ListItem>)}
           </Card>
           <Card>
             <Text as="h2" size="lg">Overdue</Text>
-            {overdue.map((f: any) => <ListItem key={f.id}><Text>{f.vendor_name} - {f.salesperson_name}</Text></ListItem>)}
+            {overdue.map((f: any) => <ListItem key={f.id}><Text>{f.vendor.name} - {f.creator.name} ({f.status})</Text></ListItem>)}
           </Card>
           <Card>
             <Text as="h2" size="lg">Upcoming</Text>
-            {upcoming.map((f: any) => <ListItem key={f.id}><Text>{f.vendor_name} - {f.salesperson_name}</Text></ListItem>)}
+            {upcoming.map((f: any) => <ListItem key={f.id}><Text>{f.vendor.name} - {f.creator.name} ({f.status})</Text></ListItem>)}
           </Card>
         </>
       )}

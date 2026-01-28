@@ -16,7 +16,7 @@ export const getSalesFollowupsAPI = async () => {
 export const getManagerFollowupsAPI = async (filter: string = 'today') => {
   // Default and normalization
   const normalized = filter === 'all' ? 'today' : filter || 'today';
-  const path = `/follow-ups?scope=all&filter=${normalized}`;
+  const path = `/manager/follow-ups?filter=${normalized}&limit=20&offset=0`;
 
   const isDev = process.env.NODE_ENV !== 'production';
 
@@ -71,8 +71,8 @@ export const getManagerFollowupsAPI = async (filter: string = 'today') => {
     if (parsed?.data && Array.isArray(parsed.data)) return parsed;
     if (Array.isArray(parsed)) return { data: parsed };
 
-    // If API returned an object with `followUps` (current shape), map it
-    if (parsed?.followUps && Array.isArray(parsed.followUps)) return { data: parsed.followUps };
+    // If API returned an object with `followUps` (current shape), return as is
+    if (parsed?.followUps && Array.isArray(parsed.followUps)) return parsed;
 
     // If API returned an object with `followups` (older shape), map it
     if (parsed?.followups && Array.isArray(parsed.followups)) return { data: parsed.followups };
