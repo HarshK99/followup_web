@@ -9,8 +9,8 @@ export type FollowUpFromAPI = {
   potential_score: number;
   note?: string;
   follow_up_date: string;
-  status: string;
   call_status: string;
+  status: string;
 };
 
 export type ManagerFollowupsResponse = {
@@ -32,4 +32,5 @@ export type FollowUpRow = {
   note: string;
   followUpDate: string;
   callStatus: string;
+  status: string;
 };

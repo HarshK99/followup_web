@@ -6,7 +6,7 @@ import { tokens } from '../tokens';
 interface SelectProps {
   options: { value: string; label: string }[];
   value?: string;
-  onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  onChange?: (value: string) => void;
   disabled?: boolean;
   placeholder?: string;
   error?: boolean;
@@ -41,17 +41,21 @@ export const Select: React.FC<SelectProps> = ({
     borderRadius: 0, // Remove border radius for bottom-border-only style
     outline: 'none',
     width: '100%',
+    minWidth: '140px',
     boxSizing: 'border-box',
     backgroundColor: 'transparent', // Ensure no background changes
     transition: 'border-color 0.2s, border-width 0.2s',
     opacity: disabled ? 0.6 : 1,
     cursor: disabled ? 'not-allowed' : 'pointer',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
   };
 
   return (
     <select
       value={value}
-      onChange={onChange}
+      onChange={onChange ? (e) => onChange(e.target.value) : undefined}
       disabled={disabled}
       onFocus={() => setIsFocused(true)}
       onBlur={() => setIsFocused(false)}

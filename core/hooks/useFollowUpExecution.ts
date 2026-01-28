@@ -11,6 +11,7 @@ interface FollowUp {
   note: string;
   followUpDate: string;
   callStatus: string;
+  status: string;
 }
 
 interface EditingState {
@@ -35,7 +36,7 @@ export const useFollowUpExecution = (followUps: FollowUp[]) => {
         [f.id]: {
           callStatus: f.callStatus,
           outcome: undefined,
-          note: f.note,
+          note: undefined,
           followUpDate: f.followUpDate,
         },
       }));
@@ -50,24 +51,11 @@ export const useFollowUpExecution = (followUps: FollowUp[]) => {
       setErrorStates((prev) => ({ ...prev, [followUpId]: '' }));
     },
     onSuccess: (data, variables) => {
-      const { followUpId, outcome } = variables;
+      const { followUpId } = variables;
       setLoadingStates((prev) => ({ ...prev, [followUpId]: false }));
 
-      // Update the query data
-      queryClient.setQueryData(['manager-followups'], (old: FollowUp[] | undefined) => {
-        if (!old) return old;
-        if (outcome === 'order_placed') {
-          // Remove the follow-up
-          return old.filter((f) => f.id !== followUpId);
-        } else {
-          // Update the follow-up with new data
-          return old.map((f) =>
-            f.id === followUpId
-              ? { ...f, ...editingStates[followUpId] }
-              : f
-          );
-        }
-      });
+      // Invalidate and refetch follow-ups
+      queryClient.invalidateQueries({ queryKey: ['manager-followups'] });
     },
     onError: (error, variables) => {
       const { followUpId } = variables;
@@ -79,20 +67,24 @@ export const useFollowUpExecution = (followUps: FollowUp[]) => {
   const handleChange = useCallback((id: string, field: keyof EditingState, value: string) => {
     setEditingStates((prev) => ({
       ...prev,
-      [id]: { ...prev[id], [field]: value },
+      [id]: {
+        ...prev[id],
+        [field]: value,
+        ...(field === 'callStatus' && value !== 'picked_up' ? { outcome: undefined } : {}),
+      },
     }));
   }, []);
 
   const handleSubmit = useCallback((id: string) => {
     const state = editingStates[id];
-    if (!state) return;
+    if (!state || state.callStatus === 'not_called') return;
 
     const payload = {
-      followUpId: id,
-      callStatus: state.callStatus,
+      follow_up_id: id,
+      call_status: state.callStatus,
       ...(state.outcome && { outcome: state.outcome }),
       ...(state.note && { note: state.note }),
-      ...(state.followUpDate && { followUpDate: state.followUpDate }),
+      ...(state.followUpDate && { follow_up_date: state.followUpDate }),
     };
 
     mutation.mutate(payload);

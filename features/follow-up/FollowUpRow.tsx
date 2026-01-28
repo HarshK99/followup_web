@@ -10,6 +10,7 @@ interface FollowUp {
   note: string;
   followUpDate: string;
   callStatus: string;
+  status: string;
 }
 
 interface EditingState {
@@ -47,18 +48,20 @@ export const FollowUpRow: React.FC<FollowUpRowProps> = ({
   onChange,
   onSubmit,
 }) => {
+  const isCompleted = followUp.status === 'completed';
   return (
     <TableRow>
       <TableCell><Text>{followUp.vendorName}</Text></TableCell>
       <TableCell><Text>{followUp.area}</Text></TableCell>
       <TableCell><Text>{followUp.phone}</Text></TableCell>
       <TableCell><Text>{followUp.potentialScore}</Text></TableCell>
+      <TableCell><Text>{followUp.note}</Text></TableCell>
       <TableCell>
         <Select
           value={editingState.callStatus}
           onChange={(value) => onChange('callStatus', value)}
           options={callStatusOptions}
-          disabled={loading}
+          disabled={loading || isCompleted}
         />
       </TableCell>
       <TableCell>
@@ -67,7 +70,7 @@ export const FollowUpRow: React.FC<FollowUpRowProps> = ({
             value={editingState.outcome || ''}
             onChange={(value) => onChange('outcome', value)}
             options={outcomeOptions}
-            disabled={loading}
+            disabled={loading || isCompleted}
           />
         )}
       </TableCell>
@@ -77,7 +80,7 @@ export const FollowUpRow: React.FC<FollowUpRowProps> = ({
             value={editingState.note || ''}
             onChange={(e) => onChange('note', e.target.value)}
             placeholder="Note"
-            disabled={loading}
+            disabled={loading || isCompleted}
           />
         )}
         {editingState.outcome === 'follow_up_requested' && (
@@ -85,7 +88,7 @@ export const FollowUpRow: React.FC<FollowUpRowProps> = ({
             value={editingState.note || ''}
             onChange={(e) => onChange('note', e.target.value)}
             placeholder="Note"
-            disabled={loading}
+            disabled={loading || isCompleted}
           />
         )}
       </TableCell>
@@ -95,14 +98,18 @@ export const FollowUpRow: React.FC<FollowUpRowProps> = ({
             type="date"
             value={editingState.followUpDate || ''}
             onChange={(e) => onChange('followUpDate', e.target.value)}
-            disabled={loading}
+            disabled={loading || isCompleted}
           />
         )}
       </TableCell>
       <TableCell>
-        <Button onClick={onSubmit} disabled={loading}>
-          {loading ? 'Submitting...' : 'Submit'}
-        </Button>
+        {isCompleted ? (
+          <Text color="success" size="sm">Completed</Text>
+        ) : (
+          <Button onClick={onSubmit} disabled={loading}>
+            {loading ? 'Submitting...' : 'Submit'}
+          </Button>
+        )}
         {error && <Text color="danger" size="sm">{error}</Text>}
       </TableCell>
     </TableRow>

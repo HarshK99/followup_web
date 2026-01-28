@@ -17,16 +17,18 @@ export default function FollowupsList() {
     queryFn: () => getManagerFollowupsAPI(filter),
   });
 
-  const followups: FollowUpRowType[] = data?.follow_ups.map((f) => ({
-    id: f.id,
-    vendorName: f.vendor.name,
-    area: f.vendor.area,
-    phone: f.vendor.phone,
-    potentialScore: f.potential_score,
-    note: f.note || '',
-    followUpDate: f.follow_up_date,
-    callStatus: f.call_status,
-  })) || [];
+  const followups: FollowUpRowType[] = data?.follow_ups
+    .map((f) => ({
+      id: f.id,
+      vendorName: f.vendor.name,
+      area: f.vendor.area,
+      phone: f.vendor.phone,
+      potentialScore: f.potential_score,
+      note: f.note || '',
+      followUpDate: f.follow_up_date,
+      callStatus: f.call_status,
+      status: f.status,
+    })) || [];
 
   const { editingStates, loadingStates, errorStates, handleChange, handleSubmit } = useFollowUpExecution(followups);
 
@@ -52,9 +54,10 @@ export default function FollowupsList() {
           <TableCell>Area</TableCell>
           <TableCell>Phone</TableCell>
           <TableCell flex={0.5}>Score</TableCell>
+          <TableCell>Existing Note</TableCell>
           <TableCell>Call Status</TableCell>
           <TableCell>Outcome</TableCell>
-          <TableCell>Note</TableCell>
+          <TableCell>New Note</TableCell>
           <TableCell>Follow-up Date</TableCell>
           <TableCell flex={0.5}>Actions</TableCell>
         </TableHeader>

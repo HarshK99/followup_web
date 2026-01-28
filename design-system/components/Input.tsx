@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { tokens } from '../tokens';
 
 interface InputProps {
-  type?: 'text' | 'email' | 'password' | 'tel' | 'number';
+  type?: 'text' | 'email' | 'password' | 'tel' | 'number' | 'date';
   placeholder?: string;
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;

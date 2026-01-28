@@ -37,7 +37,7 @@ export default function ManagerHome() {
   const followups = data.follow_ups;
 
   const today = followups.filter((f: FollowUpFromAPI) => f.follow_up_date === todayStr);
-  const overdue = followups.filter((f: FollowUpFromAPI) => f.follow_up_date < todayStr && f.status === 'open');
+  const overdue = followups.filter((f: FollowUpFromAPI) => f.follow_up_date < todayStr);
   const upcoming = followups.filter((f: FollowUpFromAPI) => f.follow_up_date > todayStr);
 
   return (
