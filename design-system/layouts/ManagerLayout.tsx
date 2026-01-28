@@ -15,11 +15,13 @@ export const ManagerLayout: React.FC<ManagerLayoutProps> = ({ children, sidebar,
   };
 
   const sidebarStyle: React.CSSProperties = {
-    width: '250px',
-    backgroundColor: tokens.colors.surface, // Changed from white to surface
-    borderRight: `1px solid ${tokens.colors.border}`, // Changed from secondary to border
-    padding: tokens.spacing[4],
+    // Sidebar width is intentionally not fixed here so the passed `sidebar`
+    // node can control its own width (expanded vs collapsed).
+    backgroundColor: tokens.colors.surface,
+    borderRight: `1px solid ${tokens.colors.border}`,
     boxShadow: tokens.shadows.md,
+    display: 'flex',
+    alignItems: 'stretch',
   };
 
   const mainStyle: React.CSSProperties = {

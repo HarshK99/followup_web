@@ -48,5 +48,5 @@ export const login = async (phone_number: string, password: string): Promise<{to
 };
 
 export const getRoleHome = (role: Role): string => {
-  return role === 'salesperson' ? '/sales' : '/manager';
+  return role?.toLowerCase() === 'salesperson' ? '/sales' : '/manager';
 };

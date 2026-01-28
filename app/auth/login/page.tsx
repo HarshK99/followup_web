@@ -32,8 +32,11 @@ export default function LoginPage() {
     const result = await login(fullPhoneNumber, password);
     console.log('Login result:', result);
     if (result) {
+      console.log('Login: setting session for user role', result.user.role);
       setSession({ token: result.token, user: result.user });
-      router.push(getRoleHome(result.user.role));
+      const home = getRoleHome(result.user.role);
+      console.log('Login: navigating to', home);
+      router.push(home);
     } else {
       console.log('Login failed - showing invalid credentials');
       setError('Invalid credentials');

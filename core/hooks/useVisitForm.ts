@@ -70,12 +70,13 @@ export function useVisitForm(visitId?: string): VisitFormState & VisitFormAction
       queryClient.invalidateQueries({ queryKey: ['vendors'] });
       router.push('/sales');
     },
-    onError: (err: Error) => {
-      if (err.message === 'Unauthorized') {
-        router.push('/auth/login');
-      } else {
-        setError(err.message);
+    onError: (err: any) => {
+      if (err?.status === 401 || err?.message === 'Unauthorized') {
+        // centralized auth handler already cleared session on 401;
+        // let layout/auth layer perform the redirect
+        return;
       }
+      setError(err.message || 'An error occurred');
     },
   });
 

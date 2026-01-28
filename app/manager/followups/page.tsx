@@ -19,7 +19,7 @@ export default function FollowupsList() {
   const { data: followups = [] as any[] } = useQuery({
     queryKey: ['manager-followups'],
     // Manager followups is a collection endpoint — extract `.data` explicitly
-    queryFn: () => getManagerFollowupsAPI('all').then((res: any) => res.data),
+    queryFn: () => getManagerFollowupsAPI('today').then((res: any) => res.data),
   });
 
   const outcomeMutation = useMutation({
@@ -30,12 +30,14 @@ export default function FollowupsList() {
       setRescheduleDate('');
       setOutcomeNote('');
     },
-    onError: (err: Error) => {
-      if (err.message === 'Unauthorized') {
-        router.push('/auth/login');
-      } else {
-        setError(err.message);
+    onError: (err: any) => {
+      if (err?.status === 401 || err?.message === 'Unauthorized') {
+        // Auth handling is centralized in the API client (clears session).
+        // Let the auth/layout layer react to session state instead of
+        // performing page-level redirects here.
+        return;
       }
+      setError(err.message || 'An error occurred');
     },
   });
 
@@ -44,12 +46,11 @@ export default function FollowupsList() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['manager-followups'] });
     },
-    onError: (err: Error) => {
-      if (err.message === 'Unauthorized') {
-        router.push('/auth/login');
-      } else {
-        setError(err.message);
+    onError: (err: any) => {
+      if (err?.status === 401 || err?.message === 'Unauthorized') {
+        return;
       }
+      setError(err.message || 'An error occurred');
     },
   });
 

@@ -13,7 +13,8 @@ export default function ManagerHome() {
   const { data: followups = [] as any[] } = useQuery({
     queryKey: ['manager-followups'],
     // getManagerFollowupsAPI is a collection endpoint — extract `.data`
-    queryFn: () => getManagerFollowupsAPI('all').then((res: any) => res.data),
+    // Default landing view: filter=today (do not pass 'all')
+    queryFn: () => getManagerFollowupsAPI().then((res: any) => res.data),
   });
 
   const [todayStr, setTodayStr] = useState('');
@@ -29,18 +30,24 @@ export default function ManagerHome() {
   return (
     <div>
       <Text as="h1" size="xl" weight="bold">Manager Dashboard</Text>
-      <Card>
-        <Text as="h2" size="lg">Today</Text>
-        {today.map((f: any) => <ListItem key={f.id}><Text>{f.vendor_name} - {f.salesperson_name}</Text></ListItem>)}
-      </Card>
-      <Card>
-        <Text as="h2" size="lg">Overdue</Text>
-        {overdue.map((f: any) => <ListItem key={f.id}><Text>{f.vendor_name} - {f.salesperson_name}</Text></ListItem>)}
-      </Card>
-      <Card>
-        <Text as="h2" size="lg">Upcoming</Text>
-        {upcoming.map((f: any) => <ListItem key={f.id}><Text>{f.vendor_name} - {f.salesperson_name}</Text></ListItem>)}
-      </Card>
+      {followups.length === 0 ? (
+        <Text>No follow-ups today</Text>
+      ) : (
+        <>
+          <Card>
+            <Text as="h2" size="lg">Today</Text>
+            {today.map((f: any) => <ListItem key={f.id}><Text>{f.vendor_name} - {f.salesperson_name}</Text></ListItem>)}
+          </Card>
+          <Card>
+            <Text as="h2" size="lg">Overdue</Text>
+            {overdue.map((f: any) => <ListItem key={f.id}><Text>{f.vendor_name} - {f.salesperson_name}</Text></ListItem>)}
+          </Card>
+          <Card>
+            <Text as="h2" size="lg">Upcoming</Text>
+            {upcoming.map((f: any) => <ListItem key={f.id}><Text>{f.vendor_name} - {f.salesperson_name}</Text></ListItem>)}
+          </Card>
+        </>
+      )}
       <Button onClick={() => router.push('/manager/followups')}>View All Follow-ups</Button>
     </div>
   );

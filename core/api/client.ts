@@ -9,6 +9,20 @@ interface ApiError {
   };
 }
 
+export class ApiClientError extends Error {
+  status: number;
+  code?: string;
+  original?: any;
+
+  constructor(message: string, status = 0, code?: string, original?: any) {
+    super(message);
+    this.name = 'ApiClientError';
+    this.status = status;
+    this.code = code;
+    this.original = original;
+  }
+}
+
 export class ApiClient {
   private baseUrl: string;
 
@@ -32,47 +46,65 @@ export class ApiClient {
       headers.Authorization = `Bearer ${token}`;
     }
 
-    const response = await fetch(url, {
-      ...options,
-      headers,
-    });
+    let response: Response;
+    try {
+      response = await fetch(url, {
+        ...options,
+        headers,
+      });
+    } catch (err) {
+      throw new ApiClientError('Network error', 0, 'NETWORK_ERROR', err);
+    }
 
-    if (response.status === 401) {
+    const parsedBody = await response.json().catch(() => null);
+
+    // Handle explicit unauthorized or token-expired codes centrally
+    if (response.status === 401 || parsedBody?.error?.code === 'TOKEN_EXPIRED' || parsedBody?.error?.code === 'INVALID_TOKEN') {
       clearSession();
-      throw new Error('Unauthorized');
+      const msg = parsedBody?.error?.message || 'Unauthorized';
+      throw new ApiClientError(msg, 401, parsedBody?.error?.code, parsedBody);
     }
 
     if (!response.ok) {
-      const errorData: ApiError = await response.json().catch(() => ({
-        error: { code: 'UNKNOWN', message: 'Network error' }
-      }));
-      throw new Error(errorData.error.message);
+      const errMsg = parsedBody?.error?.message || 'API error';
+      const errCode = parsedBody?.error?.code;
+      throw new ApiClientError(errMsg, response.status, errCode, parsedBody);
     }
 
-    const data = await response.json();
-    return data as T;
+    return (parsedBody as T) as T;
   }
 
   async publicPost<T>(endpoint: string, body?: any): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
 
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: body ? JSON.stringify(body) : undefined,
-    });
-
-    if (!response.ok) {
-      const errorData: ApiError = await response.json().catch(() => ({
-        error: { code: 'UNKNOWN', message: 'Network error' }
-      }));
-      throw new Error(errorData.error.message);
+    let response: Response;
+    try {
+      response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: body ? JSON.stringify(body) : undefined,
+      });
+    } catch (err) {
+      throw new ApiClientError('Network error', 0, 'NETWORK_ERROR', err);
     }
 
-    const data = await response.json();
-    return data as T;
+    const parsedBody = await response.json().catch(() => null);
+
+    if (response.status === 401 || parsedBody?.error?.code === 'TOKEN_EXPIRED' || parsedBody?.error?.code === 'INVALID_TOKEN') {
+      clearSession();
+      const msg = parsedBody?.error?.message || 'Unauthorized';
+      throw new ApiClientError(msg, 401, parsedBody?.error?.code, parsedBody);
+    }
+
+    if (!response.ok) {
+      const errMsg = parsedBody?.error?.message || 'API error';
+      const errCode = parsedBody?.error?.code;
+      throw new ApiClientError(errMsg, response.status, errCode, parsedBody);
+    }
+
+    return (parsedBody as T) as T;
   }
 
   async get<T>(endpoint: string): Promise<T> {
