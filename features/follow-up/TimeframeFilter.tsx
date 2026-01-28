@@ -14,7 +14,7 @@ const timeframeOptions = [
 
 export const TimeframeFilter: React.FC<TimeframeFilterProps> = ({ value, onChange }) => {
   return (
-    <Stack direction="row" spacing={4} align="center">
+    <Stack direction="horizontal" spacing={4} align="center">
       <Text size="md" weight="medium">Filter:</Text>
       <Select
         value={value}
