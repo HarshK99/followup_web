@@ -82,17 +82,6 @@ Refactor or implement the given page/feature so that the codebase remains modula
 
 ---
 
-## What NOT to do
-
-* Do not change API contracts
-* Do not change backend expectations
-* Do not add new features
-* Do not redesign UI visually
-* Do not introduce global stores
-* Do not loosen architecture rules to “make it work”
-
----
-
 ## Expected outcomes
 
 After applying this refactor or implementation:

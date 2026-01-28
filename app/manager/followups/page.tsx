@@ -1,100 +1,60 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Text, Card, Button, Table, Modal, DatePicker, Input } from '../../../design-system/components';
-import { getManagerFollowupsAPI, markOutcomeAPI, cancelFollowupAPI } from '../../../core/api/followups';
+import { useQuery } from '@tanstack/react-query';
+import { Text, Stack } from '../../../design-system/components';
+import { getManagerFollowupsAPI } from '../../../core/api/followups';
+import { useFollowUpExecution } from '../../../core/hooks/useFollowUpExecution';
+import { FollowUpRow } from '../../../features/follow-up/FollowUpRow';
 import { tokens } from '../../../design-system/tokens';
+import { ManagerFollowupsResponse, FollowUpRow as FollowUpRowType } from '../../../core/types/followup';
 
 export default function FollowupsList() {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedId, setSelectedId] = useState('');
-  const [rescheduleDate, setRescheduleDate] = useState('');
-  const [outcomeNote, setOutcomeNote] = useState('');
-  const [error, setError] = useState('');
-  const router = useRouter();
-  const queryClient = useQueryClient();
-
-  const { data: followups = [] as any[] } = useQuery({
+  const { data, isLoading, error } = useQuery<ManagerFollowupsResponse>({
     queryKey: ['manager-followups'],
-    // Manager followups is a collection endpoint — extract `.data` explicitly
-    queryFn: () => getManagerFollowupsAPI('today').then((res: any) => res.followUps),
+    queryFn: () => getManagerFollowupsAPI('today'),
   });
 
-  const outcomeMutation = useMutation({
-    mutationFn: ({ id, outcome }: { id: string; outcome: any }) => markOutcomeAPI(id, outcome),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['manager-followups'] });
-      setModalOpen(false);
-      setRescheduleDate('');
-      setOutcomeNote('');
-    },
-    onError: (err: any) => {
-      if (err?.status === 401 || err?.message === 'Unauthorized') {
-        // Auth handling is centralized in the API client (clears session).
-        // Let the auth/layout layer react to session state instead of
-        // performing page-level redirects here.
-        return;
-      }
-      setError(err.message || 'An error occurred');
-    },
-  });
+  if (isLoading) {
+    return <Text>Loading follow-ups...</Text>;
+  }
 
-  const cancelMutation = useMutation({
-    mutationFn: (id: string) => cancelFollowupAPI(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['manager-followups'] });
-    },
-    onError: (err: any) => {
-      if (err?.status === 401 || err?.message === 'Unauthorized') {
-        return;
-      }
-      setError(err.message || 'An error occurred');
-    },
-  });
+  if (error) {
+    return <Text>Error loading follow-ups: {error.message}</Text>;
+  }
 
-  const handleOutcome = (id: string, outcome: string) => {
-    setError('');
-    if (outcome === 'cancel') {
-      cancelMutation.mutate(id);
-    } else {
-      outcomeMutation.mutate({ id, outcome: { outcome, outcome_note: outcomeNote, next_follow_up_date: rescheduleDate } });
-    }
-  };
+  if (!data) {
+    return null;
+  }
 
-  const headers = ['Vendor', 'Creator', 'Note', 'Date', 'Status', 'Actions'];
+  const followups: FollowUpRowType[] = data.follow_ups.map((f) => ({
+    id: f.id,
+    vendorName: f.vendor.name,
+    area: f.vendor.area,
+    phone: f.vendor.phone,
+    potentialScore: f.potential_score,
+    note: f.note || '',
+    followUpDate: f.follow_up_date,
+    callStatus: f.call_status,
+  }));
 
-  const rows = followups.map((f: any) => [
-    f.vendor.name,
-    f.creator.name,
-    f.note || 'N/A',
-    f.follow_up_date,
-    f.status,
-    <div key={f.id}>
-      <Button size="sm" onClick={() => handleOutcome(f.id, 'completed')}>Complete</Button>
-      <Button size="sm" variant="secondary" onClick={() => { setSelectedId(f.id); setModalOpen(true); }}>Reschedule</Button>
-      <Button size="sm" variant="danger" onClick={() => handleOutcome(f.id, 'cancel')}>Cancel</Button>
-    </div>
-  ]);
+  const { editingStates, loadingStates, errorStates, handleChange, handleSubmit } = useFollowUpExecution(followups);
 
   return (
     <div>
-      <Text as="h1" size="xl" weight="bold">All Follow-ups</Text>
-      {error && <Text color="danger" style={{ marginBottom: tokens.spacing[4] }}>{error}</Text>}
-      <Card>
-        <Table headers={headers} rows={rows} />
-      </Card>
-      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
-        <Text as="h3">Reschedule Follow-up</Text>
-        <div style={{ marginBottom: tokens.spacing[4] }}>
-          <DatePicker value={rescheduleDate} onChange={setRescheduleDate} />
-        </div>
-        <div style={{ marginBottom: tokens.spacing[4] }}>
-          <Input placeholder="Outcome Note" value={outcomeNote} onChange={(e) => setOutcomeNote(e.target.value)} />
-        </div>
-        <Button onClick={() => handleOutcome(selectedId, 'postponed')}>Reschedule</Button>
-      </Modal>
+      <Text as="h1" size="xl" weight="bold">Follow-ups</Text>
+      <Stack spacing={4}>
+        {followups.map((f) => (
+          <FollowUpRow
+            key={f.id}
+            followUp={f}
+            editingState={editingStates[f.id]}
+            loading={loadingStates[f.id]}
+            error={errorStates[f.id]}
+            onChange={(field, value) => handleChange(f.id, field, value)}
+            onSubmit={() => handleSubmit(f.id)}
+          />
+        ))}
+      </Stack>
     </div>
   );
 }
