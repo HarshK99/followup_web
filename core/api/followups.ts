@@ -14,9 +14,7 @@ export const getSalesFollowupsAPI = async () => {
 };
 
 export const getManagerFollowupsAPI = async (filter: string = 'today') => {
-  // Default and normalization
-  const normalized = filter === 'all' ? 'today' : filter || 'today';
-  const path = `/manager/follow-ups?filter=${normalized}&limit=20&offset=0`;
+  const path = `/manager/follow-ups?filter=${filter}&limit=20&offset=0`;
 
   const base = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001';
   const url = `${base}/api${path}`;

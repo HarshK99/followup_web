@@ -1,6 +1,5 @@
 import React from 'react';
-import { Button, Input, Select, Text, Stack } from '../../design-system/components';
-import { tokens } from '../../design-system/tokens';
+import { Button, Input, Select, Text, TableRow, TableCell } from '../../design-system/components';
 
 interface FollowUp {
   id: string;
@@ -29,6 +28,17 @@ interface FollowUpRowProps {
   onSubmit: () => void;
 }
 
+const callStatusOptions = [
+  { value: 'not_called', label: 'Not Called' },
+  { value: 'not_picked_up', label: 'Not Picked Up' },
+  { value: 'picked_up', label: 'Picked Up' },
+];
+
+const outcomeOptions = [
+  { value: 'order_placed', label: 'Order Placed' },
+  { value: 'follow_up_requested', label: 'Follow Up Requested' },
+];
+
 export const FollowUpRow: React.FC<FollowUpRowProps> = ({
   followUp,
   editingState,
@@ -37,65 +47,64 @@ export const FollowUpRow: React.FC<FollowUpRowProps> = ({
   onChange,
   onSubmit,
 }) => {
-  const callStatusOptions = [
-    { value: 'not_called', label: 'Not Called' },
-    { value: 'not_picked_up', label: 'Not Picked Up' },
-    { value: 'picked_up', label: 'Picked Up' },
-  ];
-
-  const outcomeOptions = [
-    { value: 'order_placed', label: 'Order Placed' },
-    { value: 'follow_up_requested', label: 'Follow Up Requested' },
-  ];
-
   return (
-    <Stack direction="row" spacing={tokens.spacing[4]} align="center">
-      <Text>{followUp.vendorName}</Text>
-      <Text>{followUp.area}</Text>
-      <Text>{followUp.phone}</Text>
-      <Text>{followUp.potentialScore}</Text>
-      <Select
-        value={editingState.callStatus}
-        onChange={(value) => onChange('callStatus', value)}
-        options={callStatusOptions}
-        disabled={loading}
-      />
-      {editingState.callStatus === 'picked_up' && (
+    <TableRow>
+      <TableCell><Text>{followUp.vendorName}</Text></TableCell>
+      <TableCell><Text>{followUp.area}</Text></TableCell>
+      <TableCell><Text>{followUp.phone}</Text></TableCell>
+      <TableCell><Text>{followUp.potentialScore}</Text></TableCell>
+      <TableCell>
         <Select
-          value={editingState.outcome || ''}
-          onChange={(value) => onChange('outcome', value)}
-          options={outcomeOptions}
+          value={editingState.callStatus}
+          onChange={(value) => onChange('callStatus', value)}
+          options={callStatusOptions}
           disabled={loading}
         />
-      )}
-      {editingState.outcome === 'order_placed' && (
-        <Input
-          value={editingState.note || ''}
-          onChange={(e) => onChange('note', e.target.value)}
-          placeholder="Note"
-          disabled={loading}
-        />
-      )}
-      {editingState.outcome === 'follow_up_requested' && (
-        <>
+      </TableCell>
+      <TableCell>
+        {editingState.callStatus === 'picked_up' && (
+          <Select
+            value={editingState.outcome || ''}
+            onChange={(value) => onChange('outcome', value)}
+            options={outcomeOptions}
+            disabled={loading}
+          />
+        )}
+      </TableCell>
+      <TableCell>
+        {editingState.outcome === 'order_placed' && (
           <Input
             value={editingState.note || ''}
             onChange={(e) => onChange('note', e.target.value)}
             placeholder="Note"
             disabled={loading}
           />
+        )}
+        {editingState.outcome === 'follow_up_requested' && (
+          <Input
+            value={editingState.note || ''}
+            onChange={(e) => onChange('note', e.target.value)}
+            placeholder="Note"
+            disabled={loading}
+          />
+        )}
+      </TableCell>
+      <TableCell>
+        {editingState.outcome === 'follow_up_requested' && (
           <Input
             type="date"
             value={editingState.followUpDate || ''}
             onChange={(e) => onChange('followUpDate', e.target.value)}
             disabled={loading}
           />
-        </>
-      )}
-      <Button onClick={onSubmit} disabled={loading}>
-        {loading ? 'Submitting...' : 'Submit'}
-      </Button>
-      {error && <Text color="danger">{error}</Text>}
-    </Stack>
+        )}
+      </TableCell>
+      <TableCell>
+        <Button onClick={onSubmit} disabled={loading}>
+          {loading ? 'Submitting...' : 'Submit'}
+        </Button>
+        {error && <Text color="danger" size="sm">{error}</Text>}
+      </TableCell>
+    </TableRow>
   );
 };

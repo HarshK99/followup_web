@@ -5,7 +5,7 @@ import { tokens } from '../tokens';
 
 interface StackProps {
   children: React.ReactNode;
-  spacing?: keyof typeof tokens.spacing;
+  spacing?: number;
   direction?: 'vertical' | 'horizontal';
 }
 
