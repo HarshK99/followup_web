@@ -66,10 +66,6 @@ export default function LoginPage() {
         </div>
         {error && <Text color="danger">{error}</Text>}
         <Button onClick={handleLogin}>Login</Button>
-        <Text size="sm" style={{ marginTop: tokens.spacing[4] }}>
-          Sales: +919812345678 / password<br />
-          Manager: +919876543210 / password
-        </Text>
       </Card>
     </AuthLayout>
   );
