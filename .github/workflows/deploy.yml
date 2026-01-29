@@ -27,15 +27,22 @@ jobs:
       env:
         NEXT_PUBLIC_API_BASE_URL: https://followapi.paperthoughts.in
 
+    - name: Prepare deploy bundle
+      run: |
+        mkdir deploy
+        cp -r .next/standalone deploy/
+        cp -r .next/static deploy/.next/
+        cp -r public deploy/
+
     - name: Deploy to VPS
       uses: appleboy/scp-action@v0.1.4
       with:
         host: ${{ secrets.VPS_HOST }}
         username: ${{ secrets.VPS_USER }}
         key: ${{ secrets.VPS_SSH_KEY }}
-        source: ".next/standalone/,.next/static/,public/"
+        source: "deploy/"
         target: ${{ secrets.VPS_DEPLOY_PATH }}
-        strip_components: 0
+        strip_components: 1
 
     - name: Start app on VPS
       uses: appleboy/ssh-action@v1.0.3
@@ -45,4 +52,4 @@ jobs:
         key: ${{ secrets.VPS_SSH_KEY }}
         script: |
           cd ${{ secrets.VPS_DEPLOY_PATH }}
-          node .next/standalone/server.js
+          node server.js
