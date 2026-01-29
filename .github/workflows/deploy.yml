@@ -44,6 +44,20 @@ jobs:
         target: ${{ secrets.VPS_DEPLOY_PATH }}
         strip_components: 1
 
+    - name: Verify deployment
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USER }}
+        key: ${{ secrets.VPS_SSH_KEY }}
+        script: |
+          cd ${{ secrets.VPS_DEPLOY_PATH }}
+          if [ ! -d ".next/static" ]; then
+            echo ".next/static directory is missing!"
+            exit 1
+          fi
+          echo "Deployment verified: .next/static exists"
+
     - name: Start app on VPS
       uses: appleboy/ssh-action@v1.0.3
       with:
