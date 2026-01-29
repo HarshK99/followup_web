@@ -1,7 +1,8 @@
 module.exports = {
   apps: [{
-    name: 'followup-web',
-    script: 'standalone/server.js',
+    name: 'followupx_web',
+    script: 'node_modules/.bin/next',
+    args: 'start',
     env: {
       NODE_ENV: 'production',
       NEXT_PUBLIC_API_BASE_URL: 'https://followapi.paperthoughts.in',
