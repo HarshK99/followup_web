@@ -65,7 +65,7 @@ export function Sidebar() {
     padding: `${tokens.spacing[2]}px ${tokens.spacing[2]}px`,
     borderRadius: tokens.borderRadius.sm,
     textDecoration: 'none',
-    color: active ? tokens.colors.primary : tokens.colors.text,
+    color: active ? tokens.colors.primary : tokens.colors.textPrimary,
     backgroundColor: active ? tokens.colors.primaryLight : 'transparent',
   });
 

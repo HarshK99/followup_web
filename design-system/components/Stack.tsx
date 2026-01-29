@@ -5,16 +5,16 @@ import { tokens } from '../tokens';
 
 interface StackProps {
   children: React.ReactNode;
-  spacing?: number;
+  spacing?: string;
   direction?: 'vertical' | 'horizontal';
   align?: 'start' | 'center' | 'end';
 }
 
-export function Stack({ children, spacing = 4, direction = 'vertical', align }: StackProps) {
+export function Stack({ children, spacing = '4', direction = 'vertical', align }: StackProps) {
   const style: React.CSSProperties = {
     display: 'flex',
     flexDirection: direction === 'vertical' ? 'column' : 'row',
-    gap: tokens.spacing[spacing],
+    gap: (tokens.spacing as any)[spacing],
     alignItems: align === 'start' ? 'flex-start' : align === 'end' ? 'flex-end' : align === 'center' ? 'center' : undefined,
   };
 

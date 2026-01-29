@@ -10,6 +10,7 @@ interface SelectProps {
   disabled?: boolean;
   placeholder?: string;
   error?: boolean;
+  style?: React.CSSProperties;
 }
 
 export const Select: React.FC<SelectProps> = ({
@@ -19,6 +20,7 @@ export const Select: React.FC<SelectProps> = ({
   disabled = false,
   placeholder = 'Select an option',
   error = false,
+  style: customStyle,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
 
@@ -32,7 +34,7 @@ export const Select: React.FC<SelectProps> = ({
     return isFocused ? tokens.borderWidth.medium : tokens.borderWidth.thin;
   };
 
-  const style: React.CSSProperties = {
+  const baseStyle: React.CSSProperties = {
     fontFamily: tokens.typography.fontFamily,
     fontSize: tokens.typography.fontSize.md,
     padding: `${tokens.spacing[3]} ${tokens.spacing[4]} ${tokens.spacing[3]} 0`, // Remove bottom padding to align with border
@@ -59,7 +61,7 @@ export const Select: React.FC<SelectProps> = ({
       disabled={disabled}
       onFocus={() => setIsFocused(true)}
       onBlur={() => setIsFocused(false)}
-      style={style}
+      style={{ ...baseStyle, ...customStyle }}
     >
       {!value && <option value="" disabled>{placeholder}</option>}
       {options.map((option) => (

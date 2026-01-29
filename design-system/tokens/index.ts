@@ -2,6 +2,7 @@ export const tokens = {
   colors: {
     // Theme-aware colors using CSS custom properties
     primary: '#007bff',
+    primaryLight: '#cce5ff', // Light blue for primary backgrounds
     secondary: '#6c757d',
     success: '#28a745',
     danger: '#dc3545',
