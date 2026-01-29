@@ -66,6 +66,7 @@ export default function LoginPage() {
         </div>
         {error && <Text color="danger">{error}</Text>}
         <Button onClick={handleLogin}>Login</Button>
+        <Text size="sm" style={{ marginTop: tokens.spacing[2], opacity: 0.5 }}>Build: 2026-01-29</Text>
       </Card>
     </AuthLayout>
   );
