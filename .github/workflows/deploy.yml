@@ -3,12 +3,11 @@ name: Deploy to Hostinger VPS
 on:
   push:
     branches:
-      - master  # Change to your main branch
+      - master
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -27,14 +26,38 @@ jobs:
       env:
         NEXT_PUBLIC_API_BASE_URL: https://followapi.paperthoughts.in
 
-    - name: Prepare deploy bundle
+    - name: Verify build output
       run: |
-        mkdir deploy
-        cp -r .next deploy/
-        cp -r public deploy/
-        cp package.json deploy/
-        cp package-lock.json deploy/
-        cp ecosystem.config.js deploy/
+        if [ ! -f .next/BUILD_ID ]; then
+          echo "BUILD_ID not found"
+          exit 1
+        fi
+        if [ ! -d .next/static ]; then
+          echo ".next/static not found"
+          exit 1
+        fi
+        echo "Build verification passed"
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: nextjs-build
+        path: |
+          .next/**
+          public/**
+          package.json
+          package-lock.json
+          ecosystem.config.js
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: nextjs-build
+        path: deploy
 
     - name: Deploy to VPS
       uses: appleboy/scp-action@v0.1.4
@@ -46,20 +69,6 @@ jobs:
         target: ${{ secrets.VPS_DEPLOY_PATH }}
         strip_components: 1
 
-    - name: Verify deployment
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.VPS_HOST }}
-        username: ${{ secrets.VPS_USER }}
-        key: ${{ secrets.VPS_SSH_KEY }}
-        script: |
-          cd ${{ secrets.VPS_DEPLOY_PATH }}
-          if [ ! -d ".next/static" ]; then
-            echo ".next/static directory is missing!"
-            exit 1
-          fi
-          echo "Deployment verified: .next/static exists"
-
     - name: Start app on VPS
       uses: appleboy/ssh-action@v1.0.3
       with:
@@ -67,6 +76,8 @@ jobs:
         username: ${{ secrets.VPS_USER }}
         key: ${{ secrets.VPS_SSH_KEY }}
         script: |
-          cd ${{ secrets.VPS_DEPLOY_PATH }}          npm ci          pm2 delete followupx_web || true
+          cd ${{ secrets.VPS_DEPLOY_PATH }}
+          npm ci --omit=dev
+          pm2 delete followup-web || true
           pm2 start ecosystem.config.js
           pm2 save
