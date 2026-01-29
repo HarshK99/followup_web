@@ -1,6 +1,6 @@
 module.exports = {
   apps: [{
-    name: 'followupx_web',
+    name: 'followup-web',
     script: 'node_modules/next/dist/bin/next',
     args: 'start -p 5001',
     env: {

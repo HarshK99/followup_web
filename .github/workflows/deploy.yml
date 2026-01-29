@@ -48,6 +48,7 @@ jobs:
           package.json
           package-lock.json
           ecosystem.config.js
+        include-hidden-files: true
 
   deploy:
     needs: build
@@ -66,7 +67,7 @@ jobs:
         username: ${{ secrets.VPS_USER }}
         key: ${{ secrets.VPS_SSH_KEY }}
         script: |
-          cd ${{ secrets.VPS_DEPLOY_PATH }}
+          cd "${{ secrets.VPS_DEPLOY_PATH }}"
           rm -rf .next
 
     - name: Deploy to VPS
@@ -86,8 +87,9 @@ jobs:
         username: ${{ secrets.VPS_USER }}
         key: ${{ secrets.VPS_SSH_KEY }}
         script: |
-          cd ${{ secrets.VPS_DEPLOY_PATH }}
+          cd "${{ secrets.VPS_DEPLOY_PATH }}"
+          test -f .next/BUILD_ID || exit 1
           npm ci --omit=dev
-          pm2 restart followupx_web --update-env || \
-          pm2 start ecosystem.config.js
+          pm2 restart followup-web --update-env || pm2 start ecosystem.config.js
           pm2 save
+          curl -f http://localhost:5001/auth/login || exit 1
