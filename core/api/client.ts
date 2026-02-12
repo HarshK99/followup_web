@@ -1,6 +1,7 @@
 import { getToken, clearSession } from '../auth';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://192.168.31.189:3001';
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL!;
+
 
 interface ApiError {
   error: {
