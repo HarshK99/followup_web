@@ -13,29 +13,23 @@ jobs:
       NEXT_DISABLE_TURBOPACK: 1
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
+      - run: npm ci
 
-      - name: Build application
-        run: npm run build
+      - run: npm run build
 
-      - name: Verify production build
-        run: |
+      - run: |
           test -f .next/BUILD_ID
           test -d .next/server
           test -d .next/static
 
-      - name: Upload runtime artifacts
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: followupx-web-artifacts
           path: |
@@ -51,11 +45,19 @@ jobs:
     needs: build
 
     steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v4
         with:
           name: followupx-web-artifacts
           path: artifacts
+
+      - name: Ensure remote directory exists
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            mkdir -p /var/www/followupx_web/artifacts
 
       - name: Upload artifacts to VPS
         uses: appleboy/scp-action@v0.1.7
@@ -63,11 +65,9 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.VPS_PORT || 22 }}
           source: "artifacts/*"
-          target: "/var/www/followupx_web/artifacts/"
-          timeout: 300s
-          command_timeout: 30m
+          target: "/var/www/followupx_web/artifacts"
+          strip_components: 1
 
       - name: Start app on VPS
         uses: appleboy/ssh-action@v1.0.3
@@ -75,8 +75,6 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.VPS_PORT || 22 }}
-          timeout: 1800s
           script: |
             set -e
 
